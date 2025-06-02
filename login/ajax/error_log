@@ -1,0 +1,14 @@
+[10-May-2025 01:11:33 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function registration() in /home/oranges1/public_html/login/ajax/signup.php:47
+Stack trace:
+#0 {main}
+  thrown in /home/oranges1/public_html/login/ajax/signup.php on line 47
+[10-May-2025 01:11:39 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function registration() in /home/oranges1/public_html/login/ajax/signup.php:47
+Stack trace:
+#0 {main}
+  thrown in /home/oranges1/public_html/login/ajax/signup.php on line 47
+[10-May-2025 01:11:51 UTC] PHP Fatal error:  Uncaught Error: Call to undefined function registration() in /home/oranges1/public_html/login/ajax/signup.php:47
+Stack trace:
+#0 {main}
+  thrown in /home/oranges1/public_html/login/ajax/signup.php on line 47
+[10-May-2025 01:32:56 UTC] Mailer Error: You must provide at least one recipient email address.
+[10-May-2025 01:34:03 UTC] Mailer Error: You must provide at least one recipient email address.

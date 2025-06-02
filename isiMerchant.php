@@ -1,0 +1,11 @@
+<?php
+if(empty($t)){
+    include("pages/merchantProfile.php");
+}if($t=="voucherList"){
+    include("pages/merchantVoucher.php");
+}if($t=="voucherRedeem"){
+    include("pages/merchantVoucherRedeem.php");
+}if($t=="signOut"){
+    include("pages/merchantSignOut.php");
+}
+?>

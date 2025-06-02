@@ -1,0 +1,11 @@
+<?php
+if(empty($t)){
+    include("pages/memberProfile.php");
+}if($t=="myBooking"){
+    include("pages/memberMyBooking.php");
+}if($t=="myPoint"){
+    include("pages/memberMyPoint.php");
+}if($t=="signOut"){
+    include("pages/memberSignOut.php");
+}
+?>

@@ -1,15 +1,21 @@
 <?php
-$booking_id = dekripsi(amankan($_GET['bID']));
+$booking_id = dekripsi(amankan($_GET['bID'] ?? ''));
 
-$global_member_id = dekripsi(amankan($_SESSION['osg_member_id']));
+$global_member_id = dekripsi(amankan($_SESSION['osg_member_id'] ?? ''));
 $sData  = " SELECT b.*,m.email,p.property_name,p.address,p.city,p.property_url,rt.room_type,rt.price,rt.description,rt.space,m.point,rt.price
             FROM booking b 
             left JOIN member m ON m.member_id=b.member_id
             JOIN property p ON p.property_id=b.property_id
             JOIN room_type rt ON rt.room_type_id=b.room_type_id
-            WHERE booking_id='" . $booking_id . "' and b.status_hapus='0'";
+            WHERE booking_id='" . $booking_id . "' and b.status='Draft' and b.status_hapus='0'";
 $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
 $rData  = mysqli_fetch_array($qData);
+
+if(empty($rData)){
+    header("Location: ./");
+    exit();
+}
+$roomsCount = $rData['rooms'];
 $room_type_id = $rData['room_type_id'];
 $property_id = $rData['property_id'];
 $room_id = $rData['room_id'];
@@ -273,7 +279,7 @@ $max_point_used = round(($_SESSION['persen_max_point'] * $rData['total_nilai_rup
                         <h5 class="mb-0 fs-5"><i class="fas fa-file-invoice me-1 mb-2"></i>Price Total</h5>
                         <div class="d-flex justify-content-between align-items-center">
                             <div>
-                                <p class="text-muted"><?php echo $nightCount; ?> night(s)</p>
+                                <p class="text-muted"><?php echo $roomsCount; ?> room(s) x <?php echo $nightCount; ?> night(s)</p>
                             </div>
                             <div class="text-primary fw-bold" style="font-size: 20px;">
                                 <p><?php
@@ -312,13 +318,14 @@ $max_point_used = round(($_SESSION['persen_max_point'] * $rData['total_nilai_rup
 
 <!-- Modal -->
 <div class="modal fade" id="modalInfo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    
     <div class="modal-dialog">
         <div class="modal-content">
+        <div class="modal-header border-0">
+        <button type="button" class="btn-close ms-auto" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
             <div class="modal-body">
                 <div id="ajaxInfo"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

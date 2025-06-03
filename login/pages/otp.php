@@ -30,6 +30,7 @@ if (empty($pesan)) {
     <div class="container-xxl mt-5">
         <div class="container">
             <div class="text-center wow fadeInUp" style="margin-bottom: 20px;" data-wow-delay="0.1s">
+            <div class="alert alert-info">We have sent you a 6-digit OTP code to email <?php echo maskEmail($email); ?>. Please check your email and enter the code below.</div>
                 <h6 class="section-title text-center text-primary text-uppercase">OTP VERIFICATION</h6>
             </div>
             <div class="row g-5">

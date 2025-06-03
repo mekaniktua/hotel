@@ -1,15 +1,20 @@
 <?php
 
+$t = amankan($_GET['t'] ?? '');
+$rooms = (amankan($_GET['rooms'] ?? ''));
+$adults = (amankan($_GET['adult'] ?? ''));
+$children = (amankan($_GET['child'] ?? ''));
 
-$t = amankan($_GET['t']);
-$global_member_id = dekripsi(amankan($_SESSION['osg_member_id']));
-$property_id = dekripsi(amankan($_GET['pID']));
+$global_member_id = dekripsi(amankan($_SESSION['osg_member_id'] ?? ''));
+$property_id = dekripsi(amankan($_GET['pID'] ?? ''));
 
 $sTipeKamar  = " SELECT *
             FROM room_type
             WHERE status_hapus='0' and property_id='" . $property_id . "'";
 $qTipeKamar = mysqli_query($conn, $sTipeKamar) or die(mysqli_error($conn));
 
+$i = 0;
+$divTipeKamar = '';
 while ($rTipeKamar  = mysqli_fetch_array($qTipeKamar)) {
     $i += 1;
     $divTipeKamar .= "<div class='form-check form-check-inline mb-2 mt-2'>
@@ -32,7 +37,10 @@ $sGaleri    = " SELECT g.*,p.property_url
                 WHERE g.status_hapus='0' and p.property_id='" . $property_id . "'";
 $qGaleri    = mysqli_query($conn, $sGaleri) or die(mysqli_error($conn));
 
+$i = 0;
+$divGaleri = '';
 while ($rGaleri = mysqli_fetch_array($qGaleri)) {
+    $i += 1;
     $divGaleri .= " <div class='col-6 mb-3'>
                         <a href='" . $rGaleri['gallery_url'] . "' data-lightbox='gallery'>
                             <img src='" . $rGaleri['gallery_url'] . "' class='img-fluid rounded' />
@@ -66,7 +74,7 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
                 <form id="frmCari" class="row g-2">
                     <div class="col-md-10">
                         <div class="row g-2">
-                            <div class="col-md-5">
+                            <div class="col-md-4">
                                 <select name="pID" class="form-select form-select-lg">
                                     <?php while ($rProperti = mysqli_fetch_array($qProperti)) { ?>
                                         <option value="<?php echo enkripsi($rProperti['property_id']) ?>" <?php if ($rProperti['property_id'] == $property_id) echo 'SELECTED'; ?>><?php echo $rProperti['property_name']; ?></option>
@@ -78,23 +86,44 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
                                     <input type="text" name="date" class="form-control form-control-lg" id="rangePicker" style="background-color: white;" placeholder="Check in" />
                                 </div>
                             </div>
-                            <div class="col-md-2">
-                                <select name="adult" class="form-select form-select-lg">
-                                    <option disabled selected hidden value="">Adult</option>
-                                    <option value="1" <?php if ($_GET['adult'] == 1) echo 'SELECTED'; ?>>1 Adult</option>
-                                    <option value="2" <?php if ($_GET['adult'] == 2) echo 'SELECTED'; ?>>2 Adult(s)</option>
-                                </select>
+                            <div class="col-md-5">
+                                <div class="position-relative">
+                                    <button type="button" class="form-control form-control-lg text-start" id="guestSummary" style="background-color: white;">
+                                    <?php echo $rooms ?> Room<?php echo $rooms > 1 ? 's' : '' ?>, 
+                                    <?php echo $adults ?> Adult<?php echo $adults > 1 ? 's' : '' ?>, 
+                                    <?php echo $children ?> Child<?php echo $children > 1 ? 'ren' : '' ?>
+                                    </button>
+                                    
+                                    <!-- Dropdown Manual -->
+                                    <div class="dropdown-menu p-3" id="guestDropdown" style="min-width: 300px;">
+                                        <div class="mb-2">
+                                            <label class="form-label">Rooms</label>
+                                            <div class="input-group">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('rooms', -1)">−</button>
+                                                <input type="text" id="rooms" name="rooms" class="form-control text-center" value="<?php echo $rooms ?>" readonly>
+                                                <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('rooms', 1)">+</button>
+                                            </div>
+                                            </div>
+                                            <div class="mb-2">
+                                            <label class="form-label">Adults <small class="text-muted">(12+)</small></label>
+                                            <div class="input-group">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('adults', -1)">−</button>
+                                                <input type="text" id="adults" name="adult" class="form-control text-center" value="<?php echo $adults ?>" readonly>
+                                                <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('adults', 1)">+</button>
+                                            </div>
+                                            </div>
+                                            <div class="mb-2">
+                                            <label class="form-label">Children <small class="text-muted">(0-12)</small></label>
+                                            <div class="input-group">
+                                                <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('children', -1)">−</button>
+                                                <input type="text" id="children" name="child" class="form-control text-center" value="<?php echo $children ?>" readonly>
+                                                <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('children', 1)">+</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-md-2">
-                                <select name="child" class="form-select form-select-lg">
-                                    <option disabled selected hidden value="">Child</option>
-                                    <option value="1" <?php if ($_GET['child'] == 1) echo 'SELECTED'; ?>>1 Child</option>
-                                    <option value="2" <?php if ($_GET['child'] == 2) echo 'SELECTED'; ?>>2 Child(s)</option>
-                                    <option value="3" <?php if ($_GET['child'] == 3) echo 'SELECTED'; ?>>3 Child(s)</option>
-                                    <option value="4" <?php if ($_GET['child'] == 4) echo 'SELECTED'; ?>>4 Child(s)</option>
-
-                                </select>
-                            </div>
+                            
                         </div>
 
                     </div>
@@ -140,7 +169,7 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
     <div class="container-fluid py-5" style="margin-top:-30px;margin-bottom: 100px;">
         <div class="px-3">
             <div class="row g-4">
-                <div class="col-lg-12 col-md-12 wow fadeInUp" data-wow-delay="0.1s">
+                <!-- <div class="col-lg-12 col-md-12 wow fadeInUp" data-wow-delay="0.1s">
                     <div class="row g-4">
                         <div class="col-lg-6 col-md-12">
                             <div class="card mb-3" style="box-shadow: 0 0 45px rgba(0, 0, 0, .08);">
@@ -151,7 +180,7 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
                                     </div>
 
                                     <div class="collapse show" id="collapseTipeKamar">
-                                        <?php echo $divTipeKamar; ?>
+                                        <?php //echo $divTipeKamar; ?>
                                     </div>
                                 </div>
                             </div>
@@ -195,7 +224,7 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> -->
                 <div class="col-lg-12 col-md-12 wow fadeInUp" data-wow-delay="0.2s">
                     <div id="tipeKamarList"></div>
                 </div>
@@ -218,6 +247,61 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
 
     </div>
 <?php } ?>
+
+<script>
+  const guestBtn = document.getElementById("guestSummary");
+  const guestDropdown = document.getElementById("guestDropdown");
+
+  let dropdownOpen = false;
+
+  guestBtn.addEventListener("click", function (e) {
+    e.stopPropagation();
+    guestDropdown.classList.toggle("show");
+    dropdownOpen = !dropdownOpen;
+  });
+
+  // Menutup dropdown jika klik di luar
+  document.addEventListener("click", function (e) {
+    if (!guestDropdown.contains(e.target) && !guestBtn.contains(e.target)) {
+      guestDropdown.classList.remove("show");
+      dropdownOpen = false;
+    }
+  });
+
+  function updateGuest(type, delta) {
+  const input = document.getElementById(type);
+  let value = parseInt(input.value);
+
+  if (isNaN(value)) value = 0;
+
+  value += delta;
+
+  // Batas minimal semua tetap 0 atau 1 untuk rooms/adults sesuai kebutuhan
+  if (type === "rooms" && value < 1) value = 1;
+  if (type === "adults" && value < 1) value = 1;
+  if (type === "children" && value < 0) value = 0;
+
+  // Batas maksimal sesuai tipe
+  if (type === "rooms" && value > 5) value = 5;
+  if (type === "adults" && value > 10) value = 10;
+  if (type === "children" && value > 15) value = 15;
+
+  input.value = value;
+
+  updateGuestSummary();
+}
+
+  function updateGuestSummary() {
+    const rooms = document.getElementById("rooms").value;
+    const adults = document.getElementById("adults").value;
+    const children = document.getElementById("children").value;
+
+    const summary = `${rooms} Room${rooms > 1 ? 's' : ''}, ${adults} Adult${adults > 1 ? 's' : ''}, ${children} Child${children > 1 ? 'ren' : ''}`;
+    document.getElementById("guestSummary").innerText = summary;
+  }
+  
+  document.addEventListener("DOMContentLoaded", updateGuestSummary);
+</script>
 
 <script>
     // jQuery to toggle chevron icon when collapse is shown or hidden
@@ -321,8 +405,9 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
 
         const formData = new FormData();
         formData.append('pID', '<?php echo enkripsi($property_id); ?>');
-        formData.append('adult', '<?php echo enkripsi($_GET['adult']); ?>');
-        formData.append('child', '<?php echo enkripsi($_GET['child']); ?>');
+        formData.append('adult', '<?php echo enkripsi($_GET['adult']?? 1); ?>');
+        formData.append('child', '<?php echo enkripsi($_GET['child']?? 0); ?>');
+        formData.append('rooms', '<?php echo enkripsi($_GET['rooms']?? 1); ?>');
         formData.append('start_date', '<?php echo enkripsi($_GET['start_date']); ?>');
         formData.append('end_date', '<?php echo enkripsi($_GET['end_date']); ?>');
 

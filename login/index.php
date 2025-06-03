@@ -2,7 +2,8 @@
 ob_start();
 session_start();
 include("../manajemen/database.php");
-$menu = amankan($_GET['menu']);
+
+$menu = isset($_GET['menu']) ? amankan($_GET['menu']) : '';
 
 if (!empty($_SESSION['osg_member_id'])) {
     header("Location: ../?menu=member");

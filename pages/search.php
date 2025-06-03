@@ -1,14 +1,17 @@
 <?php
-$t = amankan($_GET['t']);
-// if (empty($_SESSION['osg_member_id'])) {
-//     header("Location: login/");
-// }
-$global_member_id = dekripsi(amankan($_SESSION['osg_member_id']));
+$t = amankan($_GET['t'] ?? '');
+$rooms = amankan($_GET['rooms'] ?? 1);
+$adults = amankan($_GET['adult'] ?? 1);
+$children = amankan($_GET['child'] ?? 0);
+
+$global_member_id = dekripsi(amankan($_SESSION['osg_member_id'] ?? ''));
 $sProperti  = " SELECT *
             FROM property
             WHERE status_hapus='0'";
 $qProperti = mysqli_query($conn, $sProperti) or die(mysqli_error($conn));
 
+$i = 0;
+$divProperti = '';
 while ($rProperti  = mysqli_fetch_array($qProperti)) {
     $i += 1;
     $divProperti .= "<div class='form-check mb-2 mt-2'>
@@ -39,13 +42,15 @@ $rMerchant  = " SELECT m.*
                 LIMIT 6";
 $qMerchant  = mysqli_query($conn, $rMerchant) or die(mysqli_error($conn));
 
+$mType = '';
+$mList = '';
 while ($rMerchant = mysqli_fetch_array($qMerchant)) {
-    $mType .= "<button class='btn btn-outline-primary filter-btn' data-filter='" . $rMerchant['merchant_type'] . "'>" . $rMerchant['merchant_type'] . "</button>";
+    $mType .= "<button class='btn btn-outline-primary filter-btn' data-filter='" . $rMerchant['merchant_type'] . "'>" . $rMerchant['merchant_type'] . "</button> ";
     $mList .= "
 <div class='col-md-3 portfolio-item wow fadeInUp' data-wow-delay='0.1s' data-category='" . $rMerchant['merchant_type'] . "'>
     <div class='room-item bg-transparent rounded shadow text-center'>
         <div class='w-100 h-100 rounded d-flex align-items-center justify-content-center pt-4'>
-            <img src='" . $rMerchant['merchant_url'] . "' class='img-fluid' alt='" . $rMerchant['name'] . "'>
+            <img src='" . $rMerchant['merchant_url'] . "' class='img-fluid' alt='" . $rMerchant['name'] . "' style='width: 200px; height: 200px; object-fit: cover;'>
         </div>
 
         <h5 class='mb-2 mt-3'>" . $rMerchant['name'] . "</h5>
@@ -95,14 +100,16 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
                                 <div class="row g-2">
                                     <div class="col-md-6">
                                         <div class="date" id="date1">
-                                            <input type="text" name="date" class="form-control form-control-lg" id="rangePicker" style="background-color: white;" placeholder="Check in" />
+                                            <input type="text" name="date" class="form-control form-control-lg" id="rangePicker" style="background-color: white;" placeholder="Check in"/>
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="position-relative">
                                             <!-- Tombol Pemicu -->
-                                            <button type="button" class="form-control form-control-lg text-start" id="guestSummary">
-                                                1 Room, 1 Adult, 0 Child
+                                            <button type="button" class="form-control form-control-lg text-start" id="guestSummary" style="background-color: white;">
+                                            <?php echo $rooms ?> Room<?php echo $rooms > 1 ? 's' : '' ?>, 
+                                            <?php echo $adults ?> Adult<?php echo $adults > 1 ? 's' : '' ?>, 
+                                            <?php echo $children ?> Child<?php echo $children > 1 ? 'ren' : '' ?>
                                             </button>
 
                                             <!-- Dropdown Manual -->
@@ -111,7 +118,7 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
                                                     <label class="form-label">Rooms</label>
                                                     <div class="input-group">
                                                         <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('rooms', -1)">−</button>
-                                                        <input type="text" id="rooms" name="rooms" class="form-control text-center" value="1" readonly>
+                                                        <input type="text" id="rooms" name="rooms" class="form-control text-center" value="<?php echo $rooms ?>" readonly>
                                                         <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('rooms', 1)">+</button>
                                                     </div>
                                                     </div>
@@ -119,7 +126,7 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
                                                     <label class="form-label">Adults <small class="text-muted">(12+)</small></label>
                                                     <div class="input-group">
                                                         <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('adults', -1)">−</button>
-                                                        <input type="text" id="adults" name="adult" class="form-control text-center" value="1" readonly>
+                                                        <input type="text" id="adults" name="adult" class="form-control text-center" value="<?php echo $adults ?>" readonly>
                                                         <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('adults', 1)">+</button>
                                                     </div>
                                                     </div>
@@ -127,7 +134,7 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
                                                     <label class="form-label">Children <small class="text-muted">(0-12)</small></label>
                                                     <div class="input-group">
                                                         <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('children', -1)">−</button>
-                                                        <input type="text" id="children" name="child" class="form-control text-center" value="0" readonly>
+                                                        <input type="text" id="children" name="child" class="form-control text-center" value="<?php echo $children ?>" readonly>
                                                         <button class="btn btn-outline-secondary" type="button" onclick="updateGuest('children', 1)">+</button>
                                                     </div>
                                                 </div>
@@ -148,7 +155,7 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
 </div>
 <!-- Booking End -->
 
-<?php if ($_GET['search'] == 1) { ?>
+<?php if (isset($_GET['search']) && $_GET['search'] == 1) { ?>
 
     <!-- Service Start -->
     <div class="container-fluid py-5" style="margin-top:-30px;margin-bottom: 100px;">
@@ -163,7 +170,7 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
                             </div>
 
                             <div class="collapse show" id="collapseFacilities">
-                                <?php echo $divProperti; ?>
+                                <?php //echo $divProperti; ?>
                             </div>
                         </div>
                     </div>
@@ -418,6 +425,8 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
     const summary = `${rooms} Room${rooms > 1 ? 's' : ''}, ${adults} Adult${adults > 1 ? 's' : ''}, ${children} Child${children > 1 ? 'ren' : ''}`;
     document.getElementById("guestSummary").innerText = summary;
   }
+  
+  document.addEventListener("DOMContentLoaded", updateGuestSummary);
 </script>
 
 <script>
@@ -456,7 +465,7 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
 
 
 
-        window.location.href = "?menu=detail&pID=" + x + "&start_date=" + today + "&end_date=" + tomorrow + "&adult=1&search=1";
+        window.location.href = "?menu=detail&pID=" + x + "&start_date=" + today + "&end_date=" + tomorrow + "&adult=1&child=0&rooms=1&search=1";
     }
 
     // jQuery to toggle chevron icon when collapse is shown or hidden
@@ -575,11 +584,12 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
     function propertiList() {
 
         const formData = new FormData();
-
-        formData.append('adult', '<?php echo enkripsi($_GET['adult']); ?>');
-        formData.append('child', '<?php echo enkripsi($_GET['child']); ?>');
-        formData.append('start_date', '<?php echo enkripsi($_GET['start_date']); ?>');
-        formData.append('end_date', '<?php echo enkripsi($_GET['end_date']); ?>');
+        
+        formData.append('adult', '<?php echo enkripsi($_GET['adult'] ?? ''); ?>');
+        formData.append('rooms', '<?php echo enkripsi($_GET['rooms'] ?? ''); ?>');
+        formData.append('child', '<?php echo enkripsi($_GET['child'] ?? ''); ?>');
+        formData.append('start_date', '<?php echo enkripsi($_GET['start_date'] ?? ''); ?>');
+        formData.append('end_date', '<?php echo enkripsi($_GET['end_date'] ?? ''); ?>');
 
         $('input[name="properties[]"]:checked').each(function() {
             formData.append('properties[]', $(this).val());
@@ -654,6 +664,13 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
 
     $("#frmCari").submit(function(e) {
         e.preventDefault(); // Stop default form submission
+
+        const dateInput = document.getElementById("rangePicker").value.trim();
+
+        if (!dateInput) { 
+            document.getElementById("rangePicker").focus();
+            return;
+        }
 
         var frm = $('#frmCari')[0];
         var formData = new FormData(frm);

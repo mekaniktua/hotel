@@ -2,13 +2,14 @@
 session_start();
 include("../manajemen/database.php");
 
-$adult = dekripsi(amankan($_POST['adult']));
-$child = dekripsi(amankan($_POST['child']));
-$start_date = dekripsi(amankan($_POST['start_date']));
-$end_date = dekripsi(amankan($_POST['end_date']));
+$adult = dekripsi(amankan($_POST['adult'] ?? ''));
+$child = dekripsi(amankan($_POST['child'] ?? ''));
+$rooms = dekripsi(amankan($_POST['rooms'] ?? ''));
+$start_date = dekripsi(amankan($_POST['start_date'] ?? ''));
+$end_date = dekripsi(amankan($_POST['end_date'] ?? ''));
 
-$properties = ($_POST['properties']);
-$spaces = ($_POST['spaces']);
+$properties = ($_POST['properties'] ?? '');
+$spaces = ($_POST['spaces'] ?? '');
 
 if (is_array($properties)) {
   foreach ($properties as $property) {
@@ -44,7 +45,9 @@ $sData  = " SELECT p.*
 $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
 
 ?>
-<?php while ($rData = mysqli_fetch_array($qData)) {
+
+<?php $i=0; $divProperti = ''; 
+while ($rData = mysqli_fetch_array($qData)) {
   $i++;
   $sTipe  = " SELECT *
               FROM room_type 
@@ -52,6 +55,8 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
               order by price desc,room_type
               limit 3";
   $qTipe = mysqli_query($conn, $sTipe) or die(mysqli_error($conn));
+
+  $tipe = '';
   while ($rTipe = mysqli_fetch_array($qTipe)) {
     $tipe .= "<span class='bg-warning bg-opacity-50 text-white rounded-pill px-2 py-1' style='backdrop-filter: blur(6px);'>" . $rTipe['room_type'] . "</span>&nbsp;";
     $price = $rTipe['price'];
@@ -99,6 +104,6 @@ if (empty($i)) { ?>
 
 <script>
   function pilih(x) {
-    window.open("?menu=detail&start_date=<?php echo $start_date; ?>&end_date=<?php echo $end_date; ?>&adult=<?php echo $adult; ?>&child=<?php echo $child ?>&search=1&pID=" + x, "_self");
+    window.open("?menu=detail&start_date=<?php echo $start_date; ?>&rooms=<?php echo $rooms; ?>&end_date=<?php echo $end_date; ?>&adult=<?php echo $adult; ?>&child=<?php echo $child ?>&search=1&pID=" + x, "_self");
   }
 </script>

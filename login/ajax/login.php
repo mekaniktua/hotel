@@ -3,9 +3,9 @@ session_start();
 include("../../manajemen/database.php");
 include("../../kirimMail.php");
 
-$email = (amankan($_POST['umail']));
-$password = (amankan($_POST['upass']));
-$redirect_uri = (amankan($_POST['redirect_uri']));
+$email = (amankan($_POST['umail']?? '' ));
+$password = (amankan($_POST['upass']?? '' ));
+$redirect_uri = (amankan($_POST['redirect_uri']?? '' ));
 
 $sCari  = " SELECT *
             FROM member
@@ -38,21 +38,27 @@ if (empty($pesan)) {
   mysqli_query($conn, $sUpdate) or die(mysqli_error($conn));
 
   //send email otp
-  $title = "Your OTP Code - Orange Sky";
-  $otp = $confirmation_code;
-  $sender = "noreply@orangesky.id";
-  $recepient = $email;
-  $sendOTP = sendOTP($sender, $recepient, $title, $otp);
   
-  if ($sendOTP == "1") {?>
-    <!-- //redirect to otp page -->
-    <script>
-      window.location.href = '?menu=otp&e=<?php echo enkripsi($email); ?>&c=<?php echo enkripsi($confirmation_code); ?>&redirect_uri=<?php echo $redirect_uri; ?>';
-    </script>
-  <?php } else {
-    $pesan = "<i class='fa fa-times'></i> Failed to send OTP to your email " . maskEmail($email);
-  }
+    $title = "Your OTP Code - Orange Sky";
+    $otp = $confirmation_code;
+    $sender = "noreply@orangesky.id";
+    $recepient = $email;
+    if($_SERVER['HTTP_HOST'] !='localhost'){
+        $sendOTP = sendOTP($sender, $recepient, $title, $otp);
+      }else{
+        $sendOTP = "1";
+      }
+      
+    if ($sendOTP == "1") {?>
+      <!-- //redirect to otp page -->
+      <script>
+        window.location.href = '?menu=otp&e=<?php echo enkripsi($email); ?>&c=<?php echo enkripsi($confirmation_code); ?>&redirect_uri=<?php echo $redirect_uri; ?>';
+      </script>
+    <?php } else {
+      $pesan = "<i class='fa fa-times'></i> Failed to send OTP to your email " . maskEmail($email);
+    }
 }
+  
 ?>
 <div class="pesanku">
   <?php if (!empty($pesan)) { ?>

@@ -64,7 +64,7 @@
          e.preventDefault(e);
          var frm = $('#frmSimpan')[0];
          var formData = new FormData(frm);
-         formData.append('redirect_uri', '<?php echo ($_GET['redirect_uri']) ?>');
+         formData.append('redirect_uri', '<?php echo ($_GET['redirect_uri'] ?? '') ?>');
          $.ajax({
              type: "POST",
              url: "ajax/login.php",

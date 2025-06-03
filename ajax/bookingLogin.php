@@ -1,16 +1,18 @@
 <?php
 session_start();
 include("../manajemen/database.php");
+include("../kirimMail.php");
 
-$email = (amankan($_POST['umail']));
-$password = (amankan($_POST['upass']));
-$booking_id = dekripsi(amankan($_POST['bID']));
+$email = (amankan($_POST['umail'] ?? ''));
+$password = (amankan($_POST['upass'] ?? ''));
+$booking_id = dekripsi(amankan($_POST['bID'] ?? ''));
 
 $sCari  = " SELECT *
             FROM member
             WHERE email='" . $email . "' and password='" . md5($password) . "' and status_hapus='0'";
 $qCari = mysqli_query($conn, $sCari) or die(mysqli_error($conn));
 $rCari  = mysqli_fetch_array($qCari);
+$member_id = $rCari['member_id'];
 
 if (empty($rCari['member_id'])) {
   $pesan = "<i class='fa fa-times'></i> Email or password is not correct";
@@ -40,15 +42,33 @@ if (empty($pesan)) {
     $pesan = "<i class='fa fa-times'></i> Booking not found";
   }else if($rCariBooking['status']=='Draft' && empty($rCariBooking['member_id'])){//jika draft dan belum ada member maka update booking
 
-    $sUpdate = " UPDATE booking
-                SET member_id='" . $rCari['member_id'] . "'
-                WHERE booking_id='" . $booking_id . "'";
+    $code = random_int(100000, 999999);
+    $sUpdate = " UPDATE member
+                SET confirmation_code='" . $code . "', 
+                    confirmation_code_expired='" . date("Y-m-d H:i:s", strtotime('+10 minutes')) . "'
+                WHERE member_id='" . $member_id . "'";
     $qUpdate = mysqli_query($conn, $sUpdate) or die(mysqli_error($conn));
+    
+    //send email otp
+  
+    $title = "Your OTP Code - Orange Sky";
+    $otp = $code;
+    $sender = "noreply@orangesky.id";
+    $recepient = $email;
 
-    $_SESSION['osg_member_id'] = enkripsi($rCari['member_id']);
-    $_SESSION['osg_member_email'] = ($rCari['email']); 
-
-    $pesanSukses = "<i class='fa fa-check'></i> Login success, please wait!!";
+    if($_SERVER['HTTP_HOST'] !='localhost'){
+      $sendOTP = sendOTP($sender, $recepient, $title, $otp);
+    }else{
+      $sendOTP = "1";
+    }
+    
+    if ($sendOTP == "1") {
+      //include ajax/bookingOtp.php
+      
+      include("bookingOtp.php");
+    } else {
+      $pesan = "<i class='fa fa-times'></i> Failed to send OTP to your email " . maskEmail($email);
+    } 
   }else{//set session lalu kembalikan ke halaman member
     $_SESSION['osg_member_id'] = enkripsi($rCari['member_id']);
     $_SESSION['osg_member_email'] = ($rCari['email']);  
@@ -61,6 +81,7 @@ if (empty($pesan)) {
 <?php  }
 }
 ?>
+
 <div class="pesanku">
   <?php if (!empty($pesan)) { ?>
     <div class="alert alert-danger">

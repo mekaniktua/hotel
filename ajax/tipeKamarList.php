@@ -2,14 +2,15 @@
 session_start();
 include("../manajemen/database.php");
 
-$property_id = dekripsi(amankan($_POST['pID']));
-$adult = dekripsi(amankan($_POST['adult']));
-$child = dekripsi(amankan($_POST['child']));
-$start_date = dekripsi(amankan($_POST['start_date']));
-$end_date = dekripsi(amankan($_POST['end_date']));
+$property_id = dekripsi(amankan($_POST['pID'] ?? ''));
+$adult = dekripsi(amankan($_POST['adult'] ?? 0));
+$child = dekripsi(amankan($_POST['child'] ?? 0));
+$rooms = dekripsi(amankan($_POST['rooms'] ?? 0));
+$start_date = dekripsi(amankan($_POST['start_date'] ?? ''));
+$end_date = dekripsi(amankan($_POST['end_date'] ?? ''));
 
-$tipeKamar = ($_POST['tipeKamar']);
-$spaces = ($_POST['spaces']);
+$tipeKamar = ($_POST['tipeKamar'] ?? '');
+$spaces = ($_POST['spaces'] ?? '');
 
 if (is_array($tipeKamar)) {
   foreach ($tipeKamar as $room) {
@@ -44,7 +45,9 @@ $sData  = " SELECT tk.*
 $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
 
 ?>
-<?php while ($rData = mysqli_fetch_array($qData)) {
+<?php 
+$i = 0;
+while ($rData = mysqli_fetch_array($qData)) {
   $i++;
   $sGaleri  = " SELECT *
               FROM gallery 
@@ -83,7 +86,7 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
   <div class="card mb-2" style="box-shadow: 0 0 45px rgba(0, 0, 0, .08);font-size: 18px;">
     <div class="row g-0">
       <div class="col-md-4">
-        <img src="<?php echo $rGaleri['gallery_url']; ?>" class='img-fluid rounded' alt=" <?php echo $rData['room_type'] ?>">
+        <img src="<?php echo $rGaleri['gallery_url'] ?? 'img/no_room_image.png'; ?>" class='img-fluid rounded' alt=" <?php echo $rData['room_type'] ?? 'No Image' ?>">
         <div class="px-5 py-2">
           <h5><i class="fas fa-ruler"></i> <?php echo $rData['space']; ?> m<sup>2</sup></h5>
           <div class="row">
@@ -184,8 +187,9 @@ if (empty($i)) { ?>
       data: {
         'pID': '<?php echo enkripsi($property_id) ?>',
         'kID': x,
-        'adult': '<?php echo amankan($adult) ?>',
-        'child': '<?php echo amankan($child) ?>',
+        'rooms': '<?php echo enkripsi(amankan($rooms)) ?>',
+        'adult': '<?php echo enkripsi(amankan($adult)) ?>',
+        'child': '<?php echo enkripsi(amankan($child)) ?>',
         'start_date': '<?php echo ($start_date) ?>',
         'end_date': '<?php echo ($end_date) ?>',
         'tp': y,

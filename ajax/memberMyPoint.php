@@ -24,6 +24,7 @@ $sQuery = "SELECT *
             LIMIT 30";
 $qQuery = mysqli_query($conn, $sQuery);
 
+$i=0;
 while ($r = mysqli_fetch_array($qQuery)) {
   $i++;
 

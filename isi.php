@@ -13,8 +13,14 @@ if(empty($menu)){
     include("pages/booking.php");
 }else if($menu=="confirmation"){
     include("pages/confirmation.php");
+}else if($menu=="completed"){
+    include("pages/completed.php");
 }else if($menu=="error"){
     include("pages/error.php");
+}else if($menu=="voucher"){
+    include("pages/voucher.php");
+}else if($menu=="contactUs"){
+    include("pages/contactUs.php");
 }else{
     header("Location: ./404.php");
 }

@@ -2,7 +2,9 @@
 session_start();
 ob_start();
 include("manajemen/database.php");
-$menu = amankan($_GET['menu'] ?? '');
+$menu = amankan($_GET['menu'] ?? ''); 
+
+$_SESSION['osg_member_id'] = $_COOKIE['osg_member_id'] ?? '';
 
 if (empty($_SESSION['osg_currency'])) {
     if (empty($_GET['currency'])) {
@@ -75,6 +77,8 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
     <!-- Splide CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@splidejs/splide@4.1.4/dist/css/splide.min.css">
 
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
     <!-- JavaScript Libraries -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
@@ -98,6 +102,8 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
     <script src="js/select2.min.js"></script>
     <script src="js/blockUI.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
+<!-- Swiper JS -->
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 
 
@@ -155,7 +161,7 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
                                 <a href="./" class="nav-item nav-link active">Home</a>
                                 <a href="./?menu=voucher" class="nav-item nav-link">Voucher</a>
                                 <a href="./merchant" class="nav-item nav-link">Merchant</a>
-                                <a href="./?menu=contact" class="nav-item nav-link">Contact</a>
+                                <a href="./?menu=contactUs" class="nav-item nav-link">Contact Us</a>
                                 <?php if($menu!='booking'){?>
                                 <div class="nav-item dropdown">
                                     <a href="#" class="nav-link dropdown-toggle" id="currencyDropdown" data-bs-toggle="dropdown" aria-expanded="false"><?php echo $_SESSION['osg_currency']; ?></a>

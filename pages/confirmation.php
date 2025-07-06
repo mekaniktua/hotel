@@ -3,9 +3,9 @@ $booking_id = dekripsi(amankan($_GET['bID']));
 if (empty($_SESSION['osg_member_id'])) {
     header("Location: ./");
 }
-$member_id  = dekripsi(amankan($_GET['mID']));
-$member_email =  (amankan($_GET['email']));
-$booking_id =  dekripsi(amankan($_GET['bID']));
+$member_id  = (dekripsi(amankan($_GET['mID'])));
+$member_email =  (dekripsi(amankan($_GET['email'])));
+$booking_id =  (dekripsi(amankan($_GET['bID'])));
 
 $sBooking   = " SELECT b.*,m.email 
                 FROM booking b

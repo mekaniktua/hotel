@@ -32,15 +32,15 @@ include('database.php');
    <!-- custom css -->
    <link rel="stylesheet" href="css/custom.css" />
    <!-- Font Awesome 6 CDN (Free) -->
-   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-
-
+   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet"> 
+ 
+ 
    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css">
    <link rel="stylesheet" href=" https://cdn.datatables.net/buttons/2.3.2/css/buttons.dataTables.min.css">
    <link rel="stylesheet" href="css/select2.min.css" />
    <link href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" rel="stylesheet">
    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css">
    <script src="js/jquery.min.js"></script>
    <script src="js/jquery-3.3.1.min.js"></script>
 
@@ -67,6 +67,7 @@ include('database.php');
    <script src="js/blockUI.js"></script>
    <script src="js/select2.min.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+   <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js"></script>
 
 
    <!-- custom js -->
@@ -75,11 +76,11 @@ include('database.php');
    <script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js"></script>
    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
    <script src="js/tinymce/tinymce.min.js" referrerpolicy="origin"></script>
-
+   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.17/index.global.min.js'></script>
 </head>
 
 <?php
-$user_id = amankan(dekripsi($_SESSION['orangesky_user_id']));
+$user_id = amankan(dekripsi($_SESSION['orangesky_user_id'] ?? ''));
 $sData = "  SELECT u.*
             FROM users u 
             WHERE u.user_id='" . $user_id . "'";
@@ -107,8 +108,8 @@ if (empty($rData['user_id'])) {
                   <div class="user_profle_side">
                      <div class="user_img"><img src="<?php echo (!empty($rData['user_url']) ? "../" . $rData['user_url'] : "images/no_image.png"); ?>" class="img-responsive"></div>
                      <div class="user_info">
-                        <h6><?php echo $rData['username']; ?></h6>
-                        <p><span class="online_animation"></span> <?php echo $rData['user_type'] ?></p>
+                        <h6><?php echo $rData['name'] ?? ''; ?></h6>
+                        <p><span class="online_animation"></span> <?php echo $rData['user_type'] ?? '' ?></p>
                      </div>
                   </div>
                </div>
@@ -132,6 +133,7 @@ if (empty($rData['user_id'])) {
                         <li><a href="?menu=propertyNew"> <span>New Property</span></a></li>
                         <li><a href="?menu=property"> <span>Data Property</span></a></li>
                         <li><a href="?menu=facility"> <span>Data Facility</span></a></li>
+                        <li><a href="?menu=ratePlans"> <span>Rate Plan & Avability</span></a></li>
                      </ul>
                   </li>
                   <li>
@@ -139,6 +141,7 @@ if (empty($rData['user_id'])) {
                      <ul class="collapse list-unstyled" id="merchant">
                         <li><a href="?menu=merchantNew"> <span>New Merchant</span></a></li>
                         <li><a href="?menu=merchant"> <span>Data Merchant</span></a></li>
+                        
                      </ul>
                   </li>
                   <li>
@@ -163,9 +166,9 @@ if (empty($rData['user_id'])) {
 
                            <a href="?menu=lapBooking"> <span>Booking</span></a>
                            <a href="?menu=lapMember"> <span>Member</span></a>
-                           <a href="?menu=lapTransaksi"> <span>Room</span></a>
-                           <a href="?menu=lapTransaksi"> <span>Transaksi Bersih</span></a>
-                           <a href="?menu=lapPegawai"> <span>Pegawai</span></a>
+                           <a href="?menu=lapMerchant"> <span>Merchant</span></a>
+                           <a href="?menu=lapVoucher"> <span>Voucher</span></a>
+                           <a href="?menu=lapRoom"> <span>Room</span></a>   
                         </li>
                      </ul>
                   </li>
@@ -192,7 +195,7 @@ if (empty($rData['user_id'])) {
 
                            <ul class="user_profile_dd">
                               <li>
-                                 <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="<?php echo (!empty($rData['user_url']) ? "../" . $rData['user_url'] : "images/no_image.png"); ?>" alt="#" /><span class="name_user"><?php echo $rData['nama'] ?></span></a>
+                                 <a class="dropdown-toggle" data-toggle="dropdown"><img class="img-responsive rounded-circle" src="<?php echo (!empty($rData['user_url']) ? "../" . $rData['user_url'] : "images/no_image.png"); ?>" alt="#" /><span class="name_user"><?php echo $rData['name'] ?? '' ?></span></a>
                                  <div class="dropdown-menu">
                                     <a class="dropdown-item" href="?menu=gantiPass">Ganti Password</a>
                                     <a class="dropdown-item" href="?menu=keluar"><span>Log Out</span> <i class="fa fa-sign-out"></i></a>

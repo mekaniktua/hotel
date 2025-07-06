@@ -2,8 +2,8 @@
 session_start();
 include("../database.php");
 
-$username = amankan($_POST['uname']);
-$password = amankan($_POST['upass']);
+$username = amankan($_POST['uname'] ?? '');
+$password = amankan($_POST['upass'] ?? '');
 
 
 //Cari di tabel user apakah sudah ada?
@@ -17,9 +17,9 @@ if($nCari<1){// Jika tidak ketemu keluar notif
   $pesan = "<i class='fa fa-times'></i> Username atau password salah";
 }if(empty($pesan)){
    
-  $_SESSION['orangesky_user_id']= enkripsi($rCari['user_id']); 
-  $_SESSION['orangesky_username']=($rCari['username']); 
-  $_SESSION['orangesky_tipe_user']=($rCari['tipe']); 
+  $_SESSION['orangesky_user_id']= enkripsi($rCari['user_id'] ?? ''); 
+  $_SESSION['orangesky_username']=($rCari['username'] ?? ''); 
+  $_SESSION['orangesky_tipe_user']=($rCari['tipe'] ?? ''); 
   $pesanSukses = "<i class='fa fa-done'></i> You have successfully logged in.";
    
 }

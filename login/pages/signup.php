@@ -12,8 +12,21 @@
                         <div class="row g-3">
                             <div class="col-md-12">
                                 <div class="form-floating">
+                                    <label for="email">Email</label>
                                     <input type="text" class="form-control" name="umail" id="email" placeholder="Your Email" required>
                                     <label for="email">Email</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="name" id="name" placeholder="Your Name" required>
+                                    <label for="name">Name</label>
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-floating">
+                                    <input type="text" class="form-control" name="mobile_number" id="mobile_number" placeholder="Your Phone" required>
+                                    <label for="mobile_number">Mobile Number</label>
                                 </div>
                             </div>
                             <div class="col-md-12">
@@ -37,9 +50,7 @@
 
                             <div class="col-12">
                                 <button class="btn btn-primary w-100 py-3" type="submit">Sign up</button>
-                            </div>
-                            <hr />
-                            <p>Already have an account? <a href="./">Login Here</a></p>
+                            </div> 
                         </div>
                     </form>
                 </div>
@@ -48,24 +59,7 @@
     </div>
 </div>
 <!-- Sign up End -->
-
-<!-- Modal -->
-<div class="modal fade" id="modalInfo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="exampleModalLabel"><i class="fa fa-info"></i> Information</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div id="ajaxInfo"></div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div> 
+ 
 
 <script>
     $("#frmSimpan").submit(function(e) {

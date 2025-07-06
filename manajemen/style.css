@@ -483,11 +483,11 @@ a:focus {
 }
 
 .orange_color {
-    color: #ff5722 !important;
+    color: #c0a751 !important;
 }
 
 .orange_bg {
-    background: #ff5722 !important;
+    background: #c0a751 !important;
 }
 
 .purple_color {
@@ -720,7 +720,7 @@ a:focus {
 .icon_info ul.user_profile_dd>li {
     width: auto;
     border-radius: 0;
-    background: #ff5722;
+    background: #c0a751;
     margin: 0;
     padding: 12px 0 12px 20px;
     height: auto;
@@ -730,7 +730,7 @@ a:focus {
     border: none;
     padding: 14px 26px 14px;
     font-size: 21px;
-    background: #ff5722;
+    background: #c0a751;
     margin-right: 0;
     cursor: pointer;
     float: left;
@@ -743,7 +743,7 @@ a:focus {
     position: absolute;
     right: -2px;
     top: -7px;
-    background: #ff5722;
+    background: #c0a751;
     border-radius: 100%;
     color: #fff;
     font-weight: 600;
@@ -1054,7 +1054,7 @@ a[data-toggle="collapse"] {
     font-weight: 500;
     font-size: 18px;
     color: #fff;
-    border-bottom: solid #ff5722 1px;
+    border-bottom: solid #c0a751 1px;
 }
 
 
@@ -1234,7 +1234,7 @@ a[data-toggle="collapse"] {
     background: #fff;
     padding: 15px 25px;
     margin: 20px 0 0 0;
-    border-bottom: solid #ff5722 2px;
+    border-bottom: solid #c0a751 2px;
 }
 
 .heading2 h3 {
@@ -1766,7 +1766,7 @@ button.main_bt {
 
 .main_bt:hover,
 .main_bt:focus {
-    background: #ff5722;
+    background: #c0a751;
     color: #fff;
 }
 
@@ -2012,7 +2012,7 @@ button.main_bt {
 
 .info_people .user_info_cont p.p_status {
     font-weight: 600;
-    color: #ff5722;
+    color: #c0a751;
     margin-top: 10px;
 }
 
@@ -2138,7 +2138,7 @@ i.icon {
 -------------------------------------------------------------------*/
 
 .link.today {
-    background: #ff5722;
+    background: #c0a751;
     color: #fff;
     font-weight: 600;
 }
@@ -2177,9 +2177,9 @@ i.icon {
 /** tabbar style 2 **/
 
 .tab_style2 .tabbar nav div.nav-tabs .nav-link.active {
-    background: #ff5722;
+    background: #c0a751;
     color: #fff;
-    border-color: #ff5722;
+    border-color: #c0a751;
 }
 
 
@@ -2202,9 +2202,9 @@ i.icon {
 }
 
 .tab_style3 div.tabbar div.nav-pills .nav-link.active {
-    background: #ff5722;
+    background: #c0a751;
     color: #fff;
-    border-color: #ff5722;
+    border-color: #c0a751;
 }
 
 
@@ -2564,7 +2564,7 @@ a.mail-dropdown {
 }
 
 .btn-compose:hover {
-    background: #ff5722;
+    background: #c0a751;
     color: #fff;
 }
 
@@ -2717,7 +2717,7 @@ ul.labels-info li a i {
 }
 
 .inbox-head .sr-btn {
-    background: #ff5722;
+    background: #c0a751;
     border: medium none;
     border-radius: 0;
     color: #fff;
@@ -3367,7 +3367,7 @@ table.projects tr td:first-child {
     margin: 11px 0;
     position: relative;
     left: 0;
-    color: #ff5722;
+    color: #c0a751;
 }
 
 

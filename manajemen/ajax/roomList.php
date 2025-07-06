@@ -23,9 +23,9 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
         <thead>
           <tr>
             <th width="10%">&nbsp;</th>
-            <th>ROOM</th>
-            <th>FITUR</th>
-            <th>JUMLAH</th>
+            <th>ROOM NAME</th>
+            <th>FACILITY</th>
+            <th>TOTAL</th>
             <th>ADULT</th>
             <th>CHILD</th>
           </tr>
@@ -41,7 +41,8 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
                     <i class="fa fa-pencil"></i>
                   </button>
                   <div class="dropdown-menu" aria-labelledby="menuTipeRoom">
-                    <a class="dropdown-item" href="#" onclick="edit('<?php echo enkripsi($rData['room_id']); ?>')">edit</a>
+                    <a class="dropdown-item" href="#" onclick="edit('<?php echo enkripsi($rData['room_id']); ?>')">Edit</a>
+                    <a class="dropdown-item" href="#" onclick="hapus('<?php echo enkripsi($rData['room_id']); ?>')">Delete</a>
                   </div><br /><br />
                   <?php echo ($rData['status'] == 'Publish' ? "<span style='color:green'>".$rData['status']."</span>" : "<span style='color:orange'>" . $rData['status'] . "</span>"); ?>
                 </div>
@@ -51,7 +52,7 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
                 <?php echo ($rData['is_wifi'] == 1 ? "<p><i class='fa fa-check'></i> Free Wifi</p>" : "<p><i class='fa fa-times'></i> No Wifi</p>"); ?>
                 <?php echo ($rData['is_parking'] == 1 ? "<p><i class='fa fa-check'></i> Parking</p>" : ""); ?>
                 <?php echo ($rData['is_fitness'] == 1 ? "<p><i class='fa fa-check'></i> Fitness Access</p>" : ""); ?></td>
-              <td><?php echo angka($rData['jumlah']); ?></td>
+              <td><?php echo angka($rData['total']); ?></td>
               <td><?php echo angka($rData['adult']); ?></td>
               <td><?php echo angka($rData['child']); ?></td>
             </tr>
@@ -95,7 +96,7 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
         },
         success: function(data) {
           $("#modalInfo").modal('show');
-          $("#ajaxInfo").html(data);
+          $("#ajaxInfo").html(data); 
         },
         complete: function() {
           $.unblockUI();

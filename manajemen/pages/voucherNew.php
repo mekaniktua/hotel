@@ -33,10 +33,9 @@ $qMerchant = mysqli_query($conn, $sMerchant) or die(mysqli_error($conn));
                               <div class="col-md-12 form-group">
                                  <label>MERCHANT</label>
                                  <select name="mID" class="form-control select2_single">
-                                    <?php while ($rMerchant = mysqli_fetch_array($qMerchant)) { ?>
-                                       <option value="<?php echo enkripsi($rMerchant['merchant_id'])?>" <?php if ($mID == $rMerchant['merchant_id']) {
-                                                                                                   echo "SELECTED";
-                                                                                                } ?>><?php echo $rMerchant['name'] ?></option>
+                                    <?php $mID = ''; while ($rMerchant = mysqli_fetch_array($qMerchant)) { ?>
+                                       <option value="<?php echo enkripsi($rMerchant['merchant_id'] ?? ''); ?>" <?php if ($mID == $rMerchant['merchant_id']) {echo "SELECTED";} ?>>
+                                          <?php echo $rMerchant['name'] ?? '' ?></option>
                                     <?php } ?>
                                  </select>
                               </div>
@@ -113,11 +112,13 @@ $qMerchant = mysqli_query($conn, $sMerchant) or die(mysqli_error($conn));
       flatpickr("#start_date", {
          mode: "single",
          dateFormat: "Y-m-d",
+         minDate: "today",
          defaultDate: new Date()
       });
       flatpickr("#end_date", {
          mode: "single",
          dateFormat: "Y-m-d",
+         minDate: "today",
          defaultDate: new Date(new Date().getTime() + 86400000) // Tomorrow
       });
 

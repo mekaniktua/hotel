@@ -24,7 +24,7 @@ if (!empty($booking_id_filter)) {
 
 // Status berdasarkan tab
 if ($tab === 'upcoming') {
-    $status_filter = "b.status = 'Booked' AND b.expired_date > '" . date("Y-m-d H:i:s") . "'";
+    $status_filter = "(b.status = 'Booked' or b.status = 'Waiting') AND b.expired_date > '" . date("Y-m-d H:i:s") . "'";
 } elseif ($tab === 'completed') {
     $status_filter = "b.status = 'Completed'";
 } elseif ($tab === 'expired') {
@@ -56,12 +56,19 @@ while ($r = mysqli_fetch_array($qBookings)) {
 
     if ($r['status'] == 'Booked') {
         $bg = "bg-primary";
+        $status = "Booked";
     } elseif ($r['status'] == 'Completed') {
         $bg = "bg-success";
+        $status = "Completed";
     } elseif ($r['status'] == 'Expired') {
         $bg = "bg-danger";
+        $status = "Expired";
+    } elseif ($r['status'] == 'Waiting') {
+        $bg = "bg-warning";
+        $status = "Waiting Payment";
     } else {
         $bg = "bg-secondary";
+        $status = "Booked";
     }
 ?>
     <div class="mb-1" data-name="<?php echo strtolower($r['booking_id']); ?>">
@@ -82,7 +89,7 @@ while ($r = mysqli_fetch_array($qBookings)) {
                         <strong>ID:</strong> <?php echo $r['booking_id']; ?><br>
                         <strong class="text-primary"><?php echo $r['room_type']; ?></strong>
                     </div>
-                    <div><span class="badge <?php echo $bg; ?>"><?php echo $r['status']; ?></span></div>
+                    <div><span class="badge <?php echo $bg; ?>"><?php echo $status; ?></span></div>
                 </div>
 
                 <div class="d-flex justify-content-between mb-2">
@@ -93,6 +100,20 @@ while ($r = mysqli_fetch_array($qBookings)) {
                 <div class="text-muted">
                     <small><?php echo $r['adult'] ?> <i class="fa fa-user"></i> <?php echo $r['child'] ?> <i class="fa fa-child"></i></small>
                 </div>
+                <?php if ($r['status'] == 'Waiting') { ?>
+                    <div class="pull-right">
+                        <a href="<?php echo $r['payment_link']?>"><i class="fa fa-credit-card"></i> Continue Payment</a>
+                    </div>
+                <?php }else if ($r['status'] == 'Completed') { 
+                    $sReview = "SELECT review_id FROM review WHERE member_id='".$global_member_id."' AND booking_id='" . $r['booking_id'] . "'";
+                    $qReview = mysqli_query($conn, $sReview);
+                    $rReview = mysqli_fetch_array($qReview);
+                    if(empty($rReview['review_id'])){
+                ?>
+                    <div class="pull-right">
+                        <a href="#" onclick="writeReview('<?php echo enkripsi($r['booking_id']); ?>')"><i class="fa fa-comment"></i> Write Review</a>
+                    </div>
+                <?php }} ?>
             </div>
         </div>
     </div>
@@ -104,3 +125,31 @@ while ($r = mysqli_fetch_array($qBookings)) {
         <h5 class="text-muted">No bookings found.</h5>
     </div>
 <?php } ?>
+
+
+<script>
+    function writeReview(x) {
+        
+        $.ajax({
+            type: 'POST',
+            url: 'ajax/writeReview.php',
+            data: {
+                'bID': x,
+                'mID': '<?php echo enkripsi($global_member_id);?>',
+            },
+            beforeSend: function() {
+                // setting a timeout
+                $.blockUI({
+                message: '<img src="img/loading.gif" width="50" /> Please wait...'
+                });
+            },
+            success: function(data) {
+                $("#modalReview").modal("show");
+                $("#ajaxReview").html(data);
+            },
+            complete: function() {
+                $.unblockUI();
+            },
+        })
+    }
+</script>

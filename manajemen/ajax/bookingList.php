@@ -2,10 +2,10 @@
 session_start();
 include("../database.php");
 
-$kriteria = amankan($_POST['kriteria']);
-$bookingValue = amankan($_POST['bookingValue']);
-$start_date = amankan($_POST['start_date']);
-$end_date = amankan($_POST['end_date']);
+$kriteria = amankan($_POST['kriteria'] ?? '');
+$bookingValue = amankan($_POST['bookingValue'] ?? '');
+$start_date = amankan($_POST['start_date'] ?? '');
+$end_date = amankan($_POST['end_date'] ?? '');
 
 $allowedKriteria = ['b.booking_id', 'm.email', 'm.fullname','start_date'];
 
@@ -25,47 +25,50 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
 
 ?>
 <div class="full white_shd margin_bottom_30">
-  <div class="table_section padding_infor_info">
-    <h5>DAFTAR BOOKING</h5>
-    <br />
-    <div class="table-responsive">
-      <table class="table table-striped" id="datatable">
-        <thead>
-          <tr>
-            <th width="5%">&nbsp;</th>
-            <th>BOOKING ID</th>
-            <th>START DATE</th>
-            <th>END DATE</th>
-            <th>BOOKED BY</th>
-            <th>PROPERTY (ROOM)</th>
-            <th>TOTAL</th>
-            <th>STATUS</th>
+    <div class="table_section padding_infor_info">
+        <h5>DAFTAR BOOKING</h5>
+        <br />
+        <div class="table-responsive">
+            <table class="table table-striped" id="datatable">
+                <thead>
+                    <tr>
+                        <th width="5%">&nbsp;</th>
+                        <th>BOOKING ID</th>
+                        <th>START DATE</th>
+                        <th>END DATE</th>
+                        <th>BOOKED BY</th>
+                        <th>PROPERTY (ROOM)</th>
+                        <th>TOTAL</th>
+                        <th>STATUS</th>
 
-          </tr>
-        </thead>
-        <tbody>
-          <?php while ($rData  = mysqli_fetch_array($qData)) { ?>
-            <tr class="text-nowrap">
-              <td>
-                <div class="dropdown">
-                  <button class="btn btn-success dropdown-toggle" type="button" id="menuMember" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <i class="fa fa-pencil"></i>
-                  </button>
-                  <div class="dropdown-menu" aria-labelledby="menuMember">
-                    <a class="dropdown-item" href="#" onclick="detail('<?php echo enkripsi($rData['booking_id']); ?>')">Detail</a>
-                  </div>
-                </div>
-              </td>
-              <td><?php echo ($rData['booking_id']); ?></td>
-              <td><?php echo normalTanggal($rData['start_date']); ?></td>
-              <td><?php echo normalTanggal($rData['end_date']); ?></td>
-              <td><?php echo ($rData['email']); ?></td>
-              <td>
-                <?php echo ($rData['property_name']); ?>
-                <br /><?php echo ($rData['room_type']); ?>
-              </td>
-              <td><?php echo ($rData['currency']=='IDR' ? $rData['currency'] . " " .angka($rData['total']) : $rData['currency']." ".number_format($rData['total'],1))?></td>
-              <td><?php 
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php while ($rData  = mysqli_fetch_array($qData)) { ?>
+                    <tr class="text-nowrap">
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-success dropdown-toggle" type="button" id="menuMember"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-pencil"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="menuMember">
+                                    <a class="dropdown-item" href="#"
+                                        onclick="detail('<?php echo enkripsi($rData['booking_id']); ?>')">Detail</a>
+                                </div>
+                            </div>
+                        </td>
+                        <td><?php echo ($rData['booking_id']); ?></td>
+                        <td><?php echo normalTanggal($rData['start_date']); ?></td>
+                        <td><?php echo normalTanggal($rData['end_date']); ?></td>
+                        <td><?php echo ($rData['email']); ?></td>
+                        <td>
+                            <?php echo ($rData['property_name']); ?>
+                            <br /><?php echo ($rData['room_type']); ?>
+                        </td>
+                        <td><?php echo ($rData['currency']=='IDR' ? $rData['currency'] . " " .angka($rData['total']) : $rData['currency']." ".number_format($rData['total'],1))?>
+                        </td>
+                        <td><?php 
                   if ($rData['status'] == 'Booked'){
                     echo "<span style='color:orange;'>" . $rData['status'] . "</span>";
                   } else if ($rData['status'] == 'Expired') {
@@ -76,45 +79,45 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
                     echo "<span style='color:green;'>" . $rData['status'] . "</span>";
                   }?></td>
 
-            </tr>
-          <?php }; ?>
-        </tbody>
-      </table>
+                    </tr>
+                    <?php }; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
-  </div>
 </div>
 
 <script>
-  $(document).ready(function() {
+$(document).ready(function() {
     $('#datatable').DataTable({
-      // dom: '<"container-fluid"<"row"<"col"B><"col"l><"col"f>>>rtip',
-      // buttons: [
-      //   'print', 'excel'
-      // ],
-      lengthMenu: [50, 100, 200, 500],
+        // dom: '<"container-fluid"<"row"<"col"B><"col"l><"col"f>>>rtip',
+        // buttons: [
+        //   'print', 'excel'
+        // ],
+        lengthMenu: [50, 100, 200, 500],
 
     });
-  });
+});
 
-  function detail(x) {
+function detail(x) {
     $.ajax({
-      type: "POST",
-      url: "ajax/bookingDetail.php",
-      data: {
-        'bID': x
-      },
-      beforeSend: function() {
-        $.blockUI({
-          message: '<h5><img src="images/loading.gif" width="50px" /> Please wait</h5>'
-        });
-      },
-      success: function(data) {
-        $("#modalInfo").modal('show');
-        $("#ajaxInfo").html(data);
-      },
-      complete: function() {
-        $.unblockUI();
-      }
+        type: "POST",
+        url: "ajax/bookingDetail.php",
+        data: {
+            'bID': x
+        },
+        beforeSend: function() {
+            $.blockUI({
+                message: '<h5><img src="images/loading.gif" width="50px" /> Please wait</h5>'
+            });
+        },
+        success: function(data) {
+            $("#modalInfo").modal('show');
+            $("#ajaxInfo").html(data);
+        },
+        complete: function() {
+            $.unblockUI();
+        }
     });
-  }
+}
 </script>

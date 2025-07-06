@@ -1,5 +1,5 @@
 <?php
-$t = amankan($_GET['t']);
+$t = amankan($_GET['t'] ?? "");
 if (empty($_SESSION['osg_merchant_id'])) {
     header("Location: login/");
 }

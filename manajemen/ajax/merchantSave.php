@@ -41,6 +41,7 @@ if ($jenisInput == 'New') {
         if (move_uploaded_file($_FILES['upload_file']['tmp_name'], "../../" . $location)) {
           $sInsert  = " INSERT INTO merchant
                     SET merchant_id='" . $merchant_id . "',
+                        created_date='" . date("Y-m-d H:i:s") . "',
                         name='" . $name . "', 
                         email='" . $email . "',
                         merchant_url='" . $location . "',

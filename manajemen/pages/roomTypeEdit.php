@@ -3,7 +3,7 @@ $property_id = dekripsi(amankan($_GET['prID']));
 $room_type_id = dekripsi(amankan($_GET['tkID']));
 
 $stmt = $conn->prepare("SELECT p.property_id, p.address, p.property_name, 
-                               tk.room_type_id, tk.property_id, tk.room_name, tk.capacity, tk.price
+                               tk.room_type_id, tk.property_id, tk.room_type, tk.space, tk.price
                         FROM property p
                         JOIN room_type tk ON tk.property_id = p.property_id
                         WHERE tk.room_type_id = ?");
@@ -12,7 +12,7 @@ $stmt->bind_param("s", $room_type_id);
 $stmt->execute();
 
 // Bind hasil query ke variabel
-$stmt->bind_result($property_id, $address, $property_name, $room_type_id_out, $property_id_out, $room_name, $capacity, $price);
+$stmt->bind_result($property_id, $address, $property_name, $room_type_id_out, $property_id_out, $room_type,$space, $price);
 
 // Ambil hasil
 $stmt->fetch();
@@ -24,8 +24,8 @@ $row = [
     'property_name'   => $property_name,
     'room_type_id'    => $room_type_id_out,
     'room_property_id'=> $property_id_out,
-    'room_name'       => $room_name,
-    'capacity'        => $capacity,
+    'room_type'       => $room_type,
+    'space'           => $space,
     'price'           => $price
 ];
 
@@ -77,11 +77,11 @@ $stmt->close();
                                  </td>
                               </tr>
                               <td><label>Price</label><br />
-                                 <input type="text" class="form-control" name="price" value="<?php echo $row['price'] ?>">
+                                 <input type="text" class="form-control" name="price" value="<?php echo angka($row['price']) ?>">
                                  <small style="color: orange;">* diisi angka tanpa titik dan koma</small>
                               </td>
                               <td><label>Space (m2)</label><br />
-                                 <input type="text" class="form-control" name="space" value="<?php echo $row['space'] ?>">
+                                 <input type="text" class="form-control" name="space" value="<?php echo angka($row['space']) ?>">
                                  <small style="color: orange;">* diisi angka tanpa titik dan koma</small>
                               </td>
                               </tr>

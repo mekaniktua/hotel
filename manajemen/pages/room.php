@@ -60,7 +60,7 @@ if (!$stmt->fetch()) {
                         <form id="frmSave" method="post">
                            <table class="table">
                               <tr>
-                                 <td colspan="4"><label>NAMA ROOM BARU</label><br />
+                                 <td colspan="4"><label>ROOM NAME</label><br />
                                     <input type="hidden" class="form-control" name="prID" value="<?php echo enkripsi($property_id); ?>">
                                     <input type="hidden" class="form-control" name="tkID" value="<?php echo enkripsi($room_type_id); ?>">
                                     <input type="hidden" class="form-control" name="jenis" value="<?php echo enkripsi('New'); ?>">
@@ -126,8 +126,8 @@ if (!$stmt->fetch()) {
                               </tr>
                               <tr>
 
-                                 <td colspan="2"><label>KETERANGAN</label><br />
-                                    <input type="text" class="form-control" name="Please wait">
+                                 <td colspan="2"><label>DESCRIPTION</label><br />
+                                    <input type="text" class="form-control" name="description">
                                  </td>
                                  <td><label>BED TYPE</label><br />
                                     <select name="bed" class="select2_single form-control" style="width: 100%;">
@@ -136,9 +136,11 @@ if (!$stmt->fetch()) {
                                        <option value="Twin">Twin</option>
                                     </select>
                                  </td>
-                                 <td><label>JUMLAH</label><br />
-                                    <input type="text" class="form-control" name="jumlah">
+                                 <td><label>Total</label><br />
+                                    <input type="text" class="form-control" name="total">
                                  </td>
+                              </tr>
+                                 
                               <tr>
                                  <td colspan="4">
                                     <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</button>

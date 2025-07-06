@@ -7,9 +7,9 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
 $rData  = mysqli_fetch_array($qData);
 $global_email = $rData['email'];
 
-$day = date('d', strtotime($rData['birthdate']));
-$month = date('m', strtotime($rData['birthdate']));
-$year = date('Y', strtotime($rData['birthdate']));
+$day = date('d', strtotime($rData['birthdate'] ?? '01'));
+$month = date('m', strtotime($rData['birthdate'] ?? '01'));
+$year = date('Y', strtotime($rData['birthdate'] ?? '1970'));
 ?>
 
 <div class="card" style="box-shadow: 0 0 45px rgba(0, 0, 0, .08);">
@@ -44,8 +44,7 @@ $year = date('Y', strtotime($rData['birthdate']));
                 </div>
                 <div class="col-md-3 mb-3">
                     <label>Birthdate</label>
-                    <select name="date" class="form-control select2_single">
-                        <option value="">&nbsp;</option>
+                    <select name="date" class="form-control select2_single"> 
                         <?php for ($x = 1; $x <= 31; $x++) {
                             if ($x < 10) $x = "0" . $x; ?>
                             <option value="<?php echo $x; ?>" <?php echo ($day == $x ? "SELECTED" : ""); ?>><?php echo $x; ?></option>
@@ -54,8 +53,7 @@ $year = date('Y', strtotime($rData['birthdate']));
                 </div>
                 <div class="col-md-3 mb-3">
                     &nbsp;
-                    <select name="month" class="form-control select2_single">
-                        <option value="">&nbsp;</option>
+                    <select name="month" class="form-control select2_single"> 
                         <option value="01" <?php echo ($month == '01' ? "SELECTED" : ""); ?>>January</option>
                         <option value="02" <?php echo ($month == '02' ? "SELECTED" : ""); ?>>February</option>
                         <option value="03" <?php echo ($month == '03' ? "SELECTED" : ""); ?>>March</option>
@@ -72,8 +70,7 @@ $year = date('Y', strtotime($rData['birthdate']));
                 </div>
                 <div class="col-md-3 mb-3">
                     &nbsp;
-                    <select name="year" class="form-control select2_single">
-                        <option value="">&nbsp;</option>
+                    <select name="year" class="form-control select2_single"> 
                         <?php for ($y = 1928; $y <= (date("Y") - 10); $y++) { ?>
                             <option value="<?php echo $y; ?>" <?php echo ($year == $y ? "SELECTED" : ""); ?>><?php echo $y; ?></option>
                         <?php } ?>

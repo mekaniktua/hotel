@@ -67,6 +67,9 @@ if(!empty($_GET['menu'])){
 	if ($_GET['menu'] == 'propertyEdit') {
 		include("pages/propertyEdit.php");
 	}
+	if ($_GET['menu'] == 'ratePlans') {
+		include("pages/ratePlans.php");
+	}
 	if ($_GET['menu'] == 'voucher') {
 		include("pages/voucher.php");
 	}
@@ -76,6 +79,28 @@ if(!empty($_GET['menu'])){
 	if ($_GET['menu'] == 'voucherEdit') {
 		include("pages/voucherEdit.php");
 	}
+	if ($_GET['menu'] == 'lapBooking') {
+		include("pages/laporanBooking.php");
+	}
+	if ($_GET['menu'] == 'lapMember') {
+		include("pages/laporanMember.php");
+	}
+	if ($_GET['menu'] == 'lapTransaksi') {
+		include("pages/laporanTransaksi.php");
+	}
+	if ($_GET['menu'] == 'lapMerchant') {
+		include("pages/laporanMerchant.php");
+	}
+	if ($_GET['menu'] == 'lapVoucher') {
+		include("pages/laporanVoucher.php");
+	}
+	if ($_GET['menu'] == 'lapRoom') {
+		include("pages/laporanRoom.php");
+	}
+	if ($_GET['menu'] == 'lapPegawai') {
+		include("pages/laporanPegawai.php");
+	}
+	
 }else{
 	include("pages/home.php");
 }

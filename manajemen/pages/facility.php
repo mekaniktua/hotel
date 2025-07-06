@@ -74,8 +74,9 @@
 
 
 <script>
-   $(".select2_single").select2();
+   
    $(document).ready(function() {
+      $(".select2_single").select2();
       $('#datatable').DataTable({
          // dom: '<"container-fluid"<"row"<"col"B><"col"l><"col"f>>>rtip',
          // buttons: [
@@ -120,7 +121,7 @@
          type: 'POST',
          url: 'ajax/facilityList.php',
          data: {
-            'prID': '<?php echo enkripsi($property_id); ?>'
+            'prID': ''
          },
          beforeSend: function() {
             // setting a timeout

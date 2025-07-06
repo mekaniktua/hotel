@@ -82,6 +82,8 @@ while ($rData = mysqli_fetch_array($qData)) {
       vertical-align: middle;
       text-align: center;
     }
+
+    
   </style>
   <div class="card mb-2" style="box-shadow: 0 0 45px rgba(0, 0, 0, .08);font-size: 18px;">
     <div class="row g-0">
@@ -114,31 +116,59 @@ while ($rData = mysqli_fetch_array($qData)) {
             </thead>
             <tbody>
               <?php while ($rKamar = mysqli_fetch_array($qKamar)) {
+                //get room rate
+                $mulai = new DateTime($start_date);
+                $akhir = new DateTime($end_date);
+                $interval = $mulai->diff($akhir);
+                $night_count = $interval->days;
+                $min_total_room = 0;
 
-                if ($rKamar['is_breakfast'] == 1) {
-                  if ($_SESSION['osg_currency'] == 'IDR') {
-                    $breakfast_price = $rKamar['breakfast_price'];
-                    $total_price = $rData['price'] + $breakfast_price;
-                  } else {
-                    $breakfast_price = ($rKamar['breakfast_price'] / $_SESSION['nilai_rupiah']);
-                    $total_price = (($rData['price'] / $_SESSION['nilai_rupiah']) + $breakfast_price);
-                  }
+                $price = 0;
+
+                $sql = "SELECT price,total_room FROM rate_plans WHERE room_id=? AND rate_date >= ? AND rate_date < ? ORDER BY rate_date ASC";
+                $stmt = $conn->prepare($sql);
+                $stmt->bind_param("sss", $rKamar['room_id'], $start_date, $end_date);
+                $stmt->execute();
+                $result = $stmt->get_result();
+
+                while ($row = $result->fetch_assoc()) {
+                    $price += $row['price'] ?? 0;
+
+                    if ($min_total_room==0) {
+                        $min_total_room = $row['total_room'];
+                    } elseif ($row['total_room'] < $min_total_room) {
+                        $min_total_room = $row['total_room'];
+                    }
+                }
+                $avg_price = ($night_count > 0) ? $price / $night_count : 0;
+ 
+
+                //check if room is available
+                $sCheckRoom = " SELECT sum(rooms) as total_booked 
+                                FROM booking WHERE room_id ='" . $rKamar['room_id'] . "' AND start_date >= '" . $end_date . "' AND end_date <= '" . $start_date . "' AND status_hapus='0' and status<>'Expired'";  
+                $qCheckRoom = mysqli_query($conn, $sCheckRoom) or die(mysqli_error($conn));
+                $rCheckRoom = mysqli_fetch_array($qCheckRoom);
+                $roomAvailable = $min_total_room - $rCheckRoom['total_booked']; 
+
+                if ($roomAvailable > 0) {
+                  $roomAvailable = $roomAvailable;
                 } else {
-                  $breakfast_price = 0;
-                  if ($_SESSION['osg_currency'] == 'IDR') {
-                    $total_price = $rData['price'] + $breakfast_price;
-                    $text_breakfast = "<p>Nice Breakfast Available (". $_SESSION['osg_currency'] . " " . $rKamar['breakfast_price'] . ")</p>";
-                  } else {
-                    $total_price = (($rData['price'] / $_SESSION['nilai_rupiah']) + $breakfast_price);
-                    $text_breakfast = "<p>Nice Breakfast Available (".$_SESSION['osg_currency'] . " " . number_format($rKamar['breakfast_price'] / $_SESSION['nilai_rupiah'],1,".",",") . ")</p>";
-                  }
+                  $roomAvailable = 0;
+                }
+
+                if ($_SESSION['osg_currency'] == 'IDR') {
+                   
+                  $total_price = $avg_price;
+                } else {
+                 
+                  $total_price = (($avg_price / $_SESSION['nilai_rupiah']));
                 }
 
               ?>
                 <tr>
                   <td style="text-align: left;">
+                    <h6 class='mb-2'><?php echo $rKamar['room_name'];?></h6>
                     <p><i class='fa fa-bed'></i> <?php echo $rKamar['bed'] ?> Bed</p>
-                    <?php echo ($rKamar['is_breakfast'] == 1 ? "<p style='color: green;'><i class='fa fa-check'></i> Nice Breakfast Included</p>" : $text_breakfast); ?>
                     <?php echo ($rKamar['is_wifi'] == 1 ? "<p><i class='fa fa-check'></i> Free Wifi</p>" : "<p>No Wifi</p>"); ?>
                     <?php echo ($rKamar['is_parking'] == 1 ? "<p><i class='fa fa-check'></i> Parking</p>" : ""); ?>
                     <?php echo ($rKamar['is_fitness'] == 1 ? "<p><i class='fa fa-check'></i> Fitness Access</p>" : ""); ?>
@@ -152,7 +182,21 @@ while ($rData = mysqli_fetch_array($qData)) {
                     }
                     ?>
                   </td>
-                  <td><button class="btn btn-primary" onclick="pilih('<?php echo enkripsi($rKamar['room_id']) ?>','<?php echo enkripsi($total_price) ?>')"><i class="fa fa-check"></i> Choose</button></td>
+                  <td>
+                    <?php if ($roomAvailable > 0 && $roomAvailable >= $rooms) { ?>
+                      <button class="btn btn-primary" onclick="pilih('<?php echo enkripsi($rKamar['room_id']) ?>','<?php echo enkripsi($total_price) ?>')"><i class="fa fa-check"></i> Choose</button><br />
+                      <?php if ($roomAvailable > 5) { ?>
+                        <small class="text-success"><?php echo $roomAvailable; ?> room(s) available</small>
+                      <?php } else { ?>
+                        <small class="text-danger">Only <?php echo $roomAvailable; ?> room(s) Left</small>
+                      <?php } ?>
+                    <?php } else if ($roomAvailable > 0 && $roomAvailable < $rooms) { ?>
+                      <button class="btn btn-warning" disabled><i class="fa fa-times"></i> Rooms Exceed</button>
+                      <small class="text-danger">Only <?php echo $roomAvailable; ?> room(s) Available</small>
+                    <?php } else { ?>
+                      <button class="btn btn-danger" disabled><i class="fa fa-times"></i> Sold Out</button>
+                    <?php } ?>
+                  </td>
                 </tr>
               <?php } ?>
             </tbody>

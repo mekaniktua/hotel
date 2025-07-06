@@ -2,16 +2,16 @@
 session_start();
 include("../database.php");
 
-$voucher_id = amankan(dekripsi($_POST['pID']));
-$filename = $_FILES['upload_file']['name'];
-$size = $_FILES['upload_file']['size'];
-$voucher_title = amankan($_POST['voucher_title']);
-$start_date = amankan($_POST['start_date']);
-$end_date = amankan($_POST['end_date']);
-$status = amankan($_POST['status']);
-$merchant_id = dekripsi(amankan($_POST['mID']));
-$description = amankan($_POST['description']);
-$jenisInput = amankan(dekripsi($_POST['jenisInput']));
+$voucher_id = amankan(dekripsi($_POST['pID'] ?? ''));
+$filename = $_FILES['upload_file']['name'] ?? '';
+$size = $_FILES['upload_file']['size'] ?? '';
+$voucher_title = amankan($_POST['voucher_title'] ?? '');
+$start_date = amankan($_POST['start_date'] ?? '');
+$end_date = amankan($_POST['end_date'] ?? '');
+$status = amankan($_POST['status'] ?? '');
+$merchant_id = dekripsi(amankan($_POST['mID'] ?? ''));
+$description = amankan($_POST['description'] ?? '');
+$jenisInput = amankan(dekripsi($_POST['jenisInput'] ?? ''));
 
 if (empty($voucher_title)) {
   $pesan .= "<i class='fa fa-times'></i> Voucher title is missing<br />";

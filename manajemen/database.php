@@ -4,11 +4,13 @@ if($_SERVER['HTTP_HOST']!='orangesky.id'){
 	$dbuser = "root";
 	$dbpass = "rootPassword123";//newrootpassword
 	$dbname = "db_hotel"; 
+	$env="development";
 }else{
 	$dbhost = "localhost"; 
 	$dbuser = "oranges1_user";
 	$dbpass = "Passwordku123";
 	$dbname = "oranges1_hotel";
+	$env="production";
 }
 $conn = mysqli_connect($dbhost, $dbuser, $dbpass, $dbname);
 
@@ -22,7 +24,7 @@ if (!$conn) {
 date_default_timezone_set('Asia/Jakarta');
 
 $now = date("Y-m-d H:i:s");
-$stmt = $conn->prepare("UPDATE booking SET status = 'Expired' WHERE status IN ('Draft','Booked') and expired_date < ?");
+$stmt = $conn->prepare("UPDATE booking SET status = 'Expired' WHERE status IN ('Waiting','Draft') and expired_date < ?");
 $stmt->bind_param("s", $now);
 $stmt->execute(); 
 
@@ -295,13 +297,19 @@ function amankan($x) {
 	return $kataAman;
 }
 function angka($x){
-	$angka=str_replace(",",".",number_format($x));
-	return $angka;
+	if ($x === null) return '0'; // atau 'N/A' sesuai kebutuhan
+    return number_format($x, 0, ',', '.'); // Format Indonesia: 1.000
 }
 function angkaKoma($x){
-	$angka=str_replace(".",",",number_format($x,2));
-	return $angka;
+	if ($x === null) return '0'; // atau 'N/A' sesuai kebutuhan
+    return number_format($x, 2, ',', '.'); // Contoh: 1.234,56
 }
+
+// function angkaInternasional($x, $locale){
+// 	$fmt = new NumberFormatter($locale, NumberFormatter::DECIMAL);
+//     return $fmt->format($x);
+// }
+
 function ganti($x) {
 	$ganti = strip_tags($x);
 	$ganti = str_replace("/","_",$ganti);
@@ -511,11 +519,357 @@ function tambah($text){
 
 
 function lama($date1,$date2){
-	$d1 = strtotime($date1); // or your date as well
-	$d2 = strtotime($date2);
-	$datediff = $d2 - $d1;
-	return round($datediff / (60 * 60 * 24))+1;
+	// Calculate number of nights
+	$start = new DateTime($date1);
+	$end = new DateTime($date2);
+	$diff = $start->diff($end);
+	return $diff->days;	
 }
 error_reporting(E_ALL & ~E_NOTICE);
+
+
+function dokuHostedCheckoutLocalhost($booking_id, $invoice_number, $total, $currency, $nama, $email, $phone, $member_id) {
+	$cert = str_replace('\\', '/', __DIR__ . '/certs/cacert.pem');
+    $clientId = 'BRN-0241-1750062235338';
+    $sharedKey = 'SK-f0jYIBltcc8XPzhlvc9X';
+    $path = '/checkout/v1/payment';
+    $apiUrl = 'https://api-sandbox.doku.com' . $path;
+
+    $requestId = uniqid('req_', true);
+    $timestamp = gmdate('Y-m-d\TH:i:s\Z');
+
+    $payload = [
+        'order' => [
+            'amount' => (int)$total,
+            'invoice_number' => "INV-".$invoice_number,
+            'currency' => $currency,
+			'callback_url' => "http://localhost/hotel/",
+			'callback_url_result' => "http://localhost/hotel/?menu=completed&bID="
+									. (enkripsi($booking_id))."&iNumber=".(enkripsi($invoice_number))
+									. "&email=".(enkripsi($email)),
+			'callback_url_cancel' => 'http://localhost/hotel/?menu=error'
+								. '&bID=' . (enkripsi($booking_id))
+								. '&errmsg=' . (enkripsi("Failed to process payment")),
+			'language'=> "ID",
+    		'auto_redirect'=> "true",
+			
+
+        ],
+        'customer' => [
+            'name' => $nama,
+            'email' => $email,
+            'phone' => !empty($phone) ? $phone : '081111111111'
+        ],
+        'payment' => [
+			'payment_due_date' => 60,
+			'type' => 'SALE',
+            'payment_method_type' => ['QRIS','CREDIT_CARD','VIRTUAL_ACCOUNT_BCA', 'VIRTUAL_ACCOUNT_MANDIRI', 'VIRTUAL_ACCOUNT_SYARIAH_MANDIRI']
+        ]
+       
+    ];
+
+    // Encode payload properly
+    $jsonBody = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
+	$digest = base64_encode(hash('sha256', $jsonBody, true));
+
+    $signatureComponent = implode("\n", [
+        "Client-Id:$clientId",
+        "Request-Id:$requestId",
+        "Request-Timestamp:$timestamp",
+        "Request-Target:$path",
+        "Digest:$digest"
+    ]);
+
+    $signature = base64_encode(hash_hmac('sha256', $signatureComponent, $sharedKey, true));
+
+
+
+    // Send request
+    $ch = curl_init($apiUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $jsonBody,
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            "Client-Id: $clientId",
+            "Request-Id: $requestId",
+            "Request-Timestamp: $timestamp",
+			"Request-Target: $path",
+			"Digest: $digest",
+            "Signature: HMACSHA256=$signature"
+        ],
+        CURLOPT_CAINFO => $cert, // Ganti sesuai path
+		CURLOPT_SSL_VERIFYPEER => true
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+	// Debug log
+	file_put_contents("doku_debug.log", 
+    "==== DOKU SIGNATURE DEBUG ====\n" .
+	 "Env: Development\n" .
+    "Timestamp: $timestamp\n" .
+    "Client-Id: $clientId\n" .
+    "Request-Id: $requestId\n" .
+    "Digest: $digest\n\n" .
+    "Payload JSON:\n$jsonBody\n\n" .
+    "Signature Component:\n$signatureComponent\n\n" .
+    "Expected Signature:\nHMACSHA256=" . base64_encode(hash_hmac('sha256', $signatureComponent, $sharedKey, true))
+);
+
+	if (curl_errno($ch)) {
+		$curlError = curl_error($ch);
+		curl_close($ch);
+		return [
+			'success' => false,
+			'errorCurl' => $curlError,
+			'http_code' => 0
+		];
+	}
+
+    curl_close($ch);
  
+
+    $data = json_decode($response, true);
+
+	if (isset($data['error'])) {
+		return [
+			'success' => false,
+			'error_code' => $data['error']['code'] ?? '',
+			'message' => $data['error']['message'] ?? '',
+			'response' => $data,
+			'http_code' => $httpCode,
+			'signature' => $signature
+		];
+	}else{
+		return [
+			'success' => $httpCode === 200 && isset($data['response']['payment']['url']),
+			'payment_url' => $data['response']['payment']['url'] ?? null,
+			'response' => $data,
+			'http_code' => $httpCode,
+			'message' => $response,
+			'signature' => 'HMACSHA256='.$signature
+		];
+	}
+}
+
+function dokuHostedCheckout($booking_id,$invoice_number, $total, $currency, $nama, $email, $phone, $member_id) {
+	$cert = str_replace('\\', '/', __DIR__ . '/certs/cacert.pem');
+    $clientId = 'BRN-0225-1720081027527';
+    $sharedKey = 'SK-gRrKKUris93ep91LcqMi';
+    $path = '/checkout/v1/payment';
+    $apiUrl = 'https://api.doku.com' . $path;
+
+    $requestId = uniqid('req_', true);
+    $timestamp = gmdate('Y-m-d\TH:i:s\Z');
+
+    $payload = [
+        'order' => [
+            'amount' => (int)$total,
+            'invoice_number' => "INV-".$invoice_number,
+            'currency' => $currency,
+			'callback_url' => "https://orangesky.id/",
+			'callback_url_result' => "https://orangesky.id/?menu=completed&bID="
+									. (enkripsi($booking_id))."&iNumber=".(enkripsi($invoice_number))
+									. "&email=".(enkripsi($email)),
+			'callback_url_cancel' => 'https://orangesky.id/?menu=error'
+								. '&bID=' . (enkripsi($booking_id))
+								. '&errmsg=' . (enkripsi("Failed to process payment")),
+			'language'=> "ID",
+    		'auto_redirect'=> "true",
+			
+
+        ],
+        'customer' => [
+            'name' => $nama,
+            'email' => $email,
+            'phone' => !empty($phone) ? $phone : '081111111111'
+        ],
+        'payment' => [
+			'payment_due_date' => 60,
+			'type' => 'SALE',
+            'payment_method_type' => ['VIRTUAL_ACCOUNT_MANDIRI']
+        ]
+       
+    ];
+
+    // Encode payload properly
+    $jsonBody = json_encode($payload, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRESERVE_ZERO_FRACTION);
+	$digest = base64_encode(hash('sha256', $jsonBody, true));
+
+    $signatureComponent = implode("\n", [
+        "Client-Id:$clientId",
+        "Request-Id:$requestId",
+        "Request-Timestamp:$timestamp",
+        "Request-Target:$path",
+        "Digest:$digest"
+    ]);
+
+    $signature = base64_encode(hash_hmac('sha256', $signatureComponent, $sharedKey, true));
+
+
+
+    // Send request
+    $ch = curl_init($apiUrl);
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST => true,
+        CURLOPT_POSTFIELDS => $jsonBody,
+        CURLOPT_HTTPHEADER => [
+            'Content-Type: application/json',
+            "Client-Id: $clientId",
+            "Request-Id: $requestId",
+            "Request-Timestamp: $timestamp",
+			"Request-Target: $path",
+			"Digest: $digest",
+            "Signature: HMACSHA256=$signature"
+        ],
+        CURLOPT_CAINFO => $cert, // Ganti sesuai path
+		CURLOPT_SSL_VERIFYPEER => true
+    ]);
+
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+	// Debug log
+	file_put_contents("doku_debug.log", 
+    "==== DOKU SIGNATURE DEBUG ====\n" .
+	 "Env: Production\n" .
+    "Timestamp: $timestamp\n" .
+    "Client-Id: $clientId\n" .
+    "Request-Id: $requestId\n" .
+    "Digest: $digest\n\n" .
+    "Payload JSON:\n$jsonBody\n\n" .
+    "Signature Component:\n$signatureComponent\n\n" .
+	"Signature: HMACSHA256=$signature".
+    "Expected Signature:\nHMACSHA256=" . base64_encode(hash_hmac('sha256', $signatureComponent, $sharedKey, true))
+);
+
+	if (curl_errno($ch)) {
+		$curlError = curl_error($ch);
+		curl_close($ch);
+		return [
+			'success' => false,
+			'error' => $curlError,
+			'http_code' => 0
+		];
+	}
+
+    curl_close($ch);
+ 
+
+    $data = json_decode($response, true);
+
+	if (isset($data['error'])) {
+		return [
+			'success' => false,
+			'error_code' => $data['error']['code'] ?? '',
+			'message' => $data['error']['message'] ?? '',
+			'response' => $data,
+			'http_code' => $httpCode,
+			'signature' => $signature,
+		];
+	}else{
+		return [
+			'success' => $httpCode === 200 && isset($data['response']['payment']['url']),
+			'payment_url' => $data['response']['payment']['url'] ?? null,
+			'response' => $data,
+			'http_code' => $httpCode,
+			'message' => $response,
+			'signature' => 'HMACSHA256='.$signature
+		];
+	}
+}
+
+function cekDokuPayment($clientId, $secretKey, $invoiceNumber, $url) {
+	$cert = str_replace('\\', '/', __DIR__ . '/certs/cacert.pem');
+    // Timestamp format UTC
+    $timestamp = gmdate("Y-m-d\TH:i:s\Z");
+
+    // Request ID (unique per request)
+    $requestId = 'req_' . uniqid();
+
+    // Endpoint
+    $requestTarget = "/checkout/v1/order/status/" . ($invoiceNumber); 
+	$fullUrl = $url . $requestTarget;
+
+    // Build base string for Signature
+    $componentSignature = "Client-Id:" . $clientId . "\n" .
+                          "Request-Id:" . $requestId . "\n" .
+                          "Request-Timestamp:" . $timestamp . "\n" .
+                          "Request-Target:" . ($requestTarget);
+
+    $signature = base64_encode(hash_hmac('sha256', $componentSignature, $secretKey, true));
+    $signatureHeader = "HMACSHA256=" . $signature;
+
+    // Build Headers
+    $headers = [
+        "Content-Type: application/json",
+        "Client-Id: $clientId",
+        "Request-Id: $requestId",
+        "Request-Timestamp: $timestamp",
+        "Signature: $signatureHeader"
+    ];
+
+    // CURL
+    $ch = curl_init($fullUrl);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+	curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+	curl_setopt($ch, CURLOPT_CAINFO, $cert);
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+
+	// Debug log (remove undefined variables)
+	file_put_contents("doku_payment_status.log", 
+	"==== DOKU SIGNATURE DEBUG ====\n" . 
+	"Timestamp: $timestamp\n" .
+	"Client-Id: $clientId\n" .
+	"Request-Id: $requestId\n" .
+	"Full URL: $fullUrl\n" .
+	"Signature Component:\n$componentSignature\n\n" .
+	"Signature: HMACSHA256=$signature\n".
+	"Expected Signature:\nHMACSHA256=" . base64_encode(hash_hmac('sha256', $componentSignature, $secretKey, true))
+	);
+
+	if (curl_errno($ch)) {
+		$curlError = curl_error($ch);
+		curl_close($ch);
+		return [
+			'success' => false,
+			'error' => $curlError,
+			'http_code' => 0
+		];
+	}
+	
+    curl_close($ch);
+
+    $data = json_decode($response, true);
+
+    if (isset($data['error'])) {
+        return [
+            'success' => false,
+            'error_code' => $data['error']['code'] ?? '',
+            'message' => $data['error']['message'] ?? '',
+            'response' => $data,
+            'http_code' => $httpCode,
+            'signature' => $signature,
+        ];
+    } else {
+        return [
+            'success' => $httpCode === 200,
+            'url' => $fullUrl,
+            'http_code' => $httpCode,
+            'response' => $response,
+            'data' => $data,
+            'signature' => 'HMACSHA256=' . $signature
+        ];
+    }
+}
+	
+
+
 ?>

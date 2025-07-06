@@ -1,9 +1,9 @@
 <?php
 
 $t = amankan($_GET['t'] ?? '');
-$rooms = (amankan($_GET['rooms'] ?? ''));
-$adults = (amankan($_GET['adult'] ?? ''));
-$children = (amankan($_GET['child'] ?? ''));
+$rooms = (amankan($_GET['rooms'] ?? '1'));
+$adults = (amankan($_GET['adult'] ?? '2'));
+$children = (amankan($_GET['child'] ?? '0'));
 
 $global_member_id = dekripsi(amankan($_SESSION['osg_member_id'] ?? ''));
 $property_id = dekripsi(amankan($_GET['pID'] ?? ''));
@@ -365,6 +365,7 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
     flatpickr(rangeInput, {
         mode: "range",
         dateFormat: "d M",
+        minDate: "today", // disables all past dates
         defaultDate: selectedDates,
         locale: {
             rangeSeparator: " - "
@@ -398,7 +399,7 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
             day: '2-digit',
             month: 'short'
         };
-        return date.toLocaleDateString('en-GB', options);
+        return date.toLocaleDateString('en-ID', options);
     }
 
     function tipeKamarList() {
@@ -441,13 +442,11 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
 
     function convertDateRange(input) {
         const parts = input.split(' - ');
-        const endPart = parts[1].split(',')[0].trim(); // e.g., "01 Jan"
-        const startPart = parts[0].trim(); // e.g., "31 Dec"
+        const endPart = parts[1].split(',')[0].trim(); // e.g., "14 May"
+        const startPart = parts[0].trim(); // e.g., "13 May"
 
-        // Get current year
         const currentYear = new Date().getFullYear();
 
-        // Parse months to help with year adjustment
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun",
             "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
         ];
@@ -460,18 +459,20 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
         const endDay = endDateParts[0];
         const endMonth = endDateParts[1];
 
-        // If the end month comes before the start month, it's next year
         let startYear = currentYear;
         let endYear = currentYear;
         if (monthNames.indexOf(endMonth) < monthNames.indexOf(startMonth)) {
             endYear += 1;
         }
 
-        // Create formatted dates
-        const startDate = new Date(`${startDay} ${startMonth} ${startYear}`);
-        const endDate = new Date(`${endDay} ${endMonth} ${endYear}`);
+        // Format numbers to 2-digit
+        function pad(n) {
+            return n.toString().padStart(2, '0');
+        }
 
-        // Format as YYYY-MM-DD
+        const startDate = new Date(`${startYear}-${pad(monthNames.indexOf(startMonth) + 1)}-${pad(startDay)}`);
+        const endDate = new Date(`${endYear}-${pad(monthNames.indexOf(endMonth) + 1)}-${pad(endDay)}`);
+
         const format = (date) => date.toISOString().split('T')[0];
 
         return {

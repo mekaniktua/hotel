@@ -2,7 +2,7 @@
 session_start();
 include("../database.php");
 
-$property_id = dekripsi(amankan($_POST['prID']));
+$property_id = dekripsi(amankan($_POST['prID'] ?? ''));
 $sData  = " SELECT *
             FROM room_type 
             WHERE status_hapus='0' and property_id='" . $property_id . "'
@@ -100,7 +100,7 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
         type: "POST",
         url: "ajax/roomTypeDelete.php",
         data: {
-          'pID': x
+          'rtID': x
         },
         beforeSend: function() {
           $.blockUI({

@@ -1,0 +1,19 @@
+==== DOKU SIGNATURE DEBUG ====
+Env: Development
+Timestamp: 2025-07-04T14:03:44Z
+Client-Id: BRN-0241-1750062235338
+Request-Id: req_6867df40463785.43604602
+Digest: fSS0Zqak2/Sq/8W05QF1veL5Ma9jYy4Sk/spxjhZqBg=
+
+Payload JSON:
+{"order":{"amount":600000,"invoice_number":"INV-202507042043298","currency":"IDR","callback_url":"http://localhost/hotel/","callback_url_result":"http://localhost/hotel/?menu=completed&bID=JGx7T/zXpo2ZhHlMbz4sog==&iNumber=Va5h+crdHNRsUgxnOHzu7g==&email=ZcI2HgaxoFAQCd7Xdbf/AGZIDPa58+U4DsBwPBMjFB4=","callback_url_cancel":"http://localhost/hotel/?menu=error&bID=JGx7T/zXpo2ZhHlMbz4sog==&errmsg=r7qqD9EwpXbA9tR2DUp4vsajnxK8cjv62CjteA59jN8=","language":"ID","auto_redirect":"true"},"customer":{"name":"Angga Putra Perdana","email":"sir_angga_pp@yahoo.com","phone":"082174311883"},"payment":{"payment_due_date":60,"type":"SALE","payment_method_type":["QRIS","CREDIT_CARD","VIRTUAL_ACCOUNT_BCA","VIRTUAL_ACCOUNT_MANDIRI","VIRTUAL_ACCOUNT_SYARIAH_MANDIRI"]}}
+
+Signature Component:
+Client-Id:BRN-0241-1750062235338
+Request-Id:req_6867df40463785.43604602
+Request-Timestamp:2025-07-04T14:03:44Z
+Request-Target:/checkout/v1/payment
+Digest:fSS0Zqak2/Sq/8W05QF1veL5Ma9jYy4Sk/spxjhZqBg=
+
+Expected Signature:
+HMACSHA256=VXKRts2usQGJyvXXoqhSPEpwMAkb6PhAmz2j//is5X8=

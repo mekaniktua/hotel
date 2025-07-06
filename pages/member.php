@@ -1,9 +1,12 @@
 <?php
 $t = isset($_GET['t']) ? amankan($_GET['t']) : '';
+
+$_SESSION['osg_member_id'] =$_COOKIE['osg_member_id'] ?? '';
+
 if (empty($_SESSION['osg_member_id'])) {
     header("Location: login/");
 }
-$global_member_id = dekripsi(amankan($_SESSION['osg_member_id']??  ''));
+$global_member_id = dekripsi(amankan($_SESSION['osg_member_id']));
 $sData  = " SELECT *
             FROM member
             WHERE member_id='" . $global_member_id . "' and status_hapus='0'";
@@ -33,7 +36,7 @@ $global_member_point = $rData['point'];
                                 <div class="text-primary mt-1"><?php echo $global_member_type; ?></div>
                             </div>
                             <hr />
-                            <a href="?menu=detail"><i class="fa fa-shopping-cart"></i> Book Now</a>
+                            <a href="./"><i class="fa fa-shopping-cart"></i> Book Now</a>
                             <hr />
                             <a href="?menu=member"><i class="fa fa-user"></i> Profile</a>
                             <a href="?menu=member&t=myBooking"><i class="fa fa-file-o"></i> My Booking</a>

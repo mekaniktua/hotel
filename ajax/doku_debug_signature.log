@@ -1,0 +1,7 @@
+Client-Id:BRN-0241-1750062235338
+Request-Id:req_68500292cf40f0.85909382
+Request-Timestamp:2025-06-16T11:40:02Z
+Request-Target:/checkout/v1/payment
+{"order":{"amount":540000,"invoice_number":"1545XO6OJH","currency":"IDR"},"customer":{"name":"Putri","email":"putritest@gmail.com","phone":"0821"},"override_configuration":{"payment_method":["CREDIT_CARD","QRIS","BCA_VA"]},"return_url":"http://localhost/hotel/?menu=failed&bID=xxx","callback_url":"http://localhost/hotel/?menu=confirmation&bID=xxx"}
+
+Signature: HMACSHA256=UztfbwI/YvjS1CNTs+zT3309Gh5zfl5xGujwcJtEFxw=

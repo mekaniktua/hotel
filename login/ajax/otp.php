@@ -17,9 +17,12 @@ $enc_email = enkripsi($rCari['email']);
 if (empty($member_id)) {
   $pesan = "<i class='fa fa-times'></i> Sorry, wrong OTP. Please check your email ".maskEmail($email)." and try again ";
 } else {
+   //insert to cookie
+   setcookie('osg_member_id', enkripsi($member_id), time() + (86400 * 7), "/");
+   setcookie('osg_member_email', ($rCari['email']), time() + (86400 * 7), "/");
    //insert to session
-  $_SESSION['osg_member_id']    = enkripsi($member_id);
-  $_SESSION['osg_member_email'] = ($rCari['email']);
+  $_SESSION['osg_member_id']    = $_COOKIE['osg_member_id'] ?? enkripsi($member_id);
+  $_SESSION['osg_member_email'] = ($_COOKIE['osg_member_email'] ?? $rCari['email']);
   $pesanSukses = "<i class='fa fa-check'></i> OTP verified successfully. Please wait...";
  
 }

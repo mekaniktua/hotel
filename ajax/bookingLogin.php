@@ -12,21 +12,21 @@ $sCari  = " SELECT *
             WHERE email='" . $email . "' and password='" . md5($password) . "' and status_hapus='0'";
 $qCari = mysqli_query($conn, $sCari) or die(mysqli_error($conn));
 $rCari  = mysqli_fetch_array($qCari);
-$member_id = $rCari['member_id'];
+$member_id = $rCari['member_id'] ?? '';
 
 if (empty($rCari['member_id'])) {
   $pesan = "<i class='fa fa-times'></i> Email or password is not correct";
 }
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
   $pesan = "<i class='fa fa-times'></i> Not a valid email";
 }
-if (($rCari['status'])!='Active') {
+else if (($rCari['status'] ?? '')!='Active') {
   $pesan = "<i class='fa fa-times'></i> Your account is not active, click the activation link from email";
 }
-if (empty($email)) {
+else if (empty($email)) {
   $pesan = "<i class='fa fa-times'></i> Email field still empty";
 }
-if (empty($password)) {
+else if (empty($password)) {
   $pesan = "<i class='fa fa-times'></i> Password field still empty";
 }
 if (empty($pesan)) {

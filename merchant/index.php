@@ -2,7 +2,7 @@
 ob_start();
 session_start();
 include("../manajemen/database.php");
-$menu = amankan($_GET['menu']);
+$menu = amankan($_GET['menu'] ?? "");
 
 if (!empty($_SESSION['osg_merchant_id'])) {
     header("Location: ../?menu=merchant");
@@ -99,7 +99,7 @@ $_SESSION['osg_phone'] = $setting['phone'] ?? ''; //Set OSG email
                         <div class="col-lg-7 px-5 text-start">
                             <div class="h-100 d-inline-flex align-items-center py-2 me-4">
                                 <i class="fa fa-envelope text-primary me-2"></i>
-                                <p class="mb-0">info@orangeskygroup.co.id</p>
+                                <p class="mb-0">booknow@orangeskygroup.co.id</p>
                             </div>
                             <div class="h-100 d-inline-flex align-items-center py-2">
                                 <i class="fa fa-phone-alt text-primary me-2"></i>

@@ -39,8 +39,8 @@ $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
                         </tr>
                      </thead>
                      <tbody>
-                        <?php while ($rData = mysqli_fetch_array($qData)) {
-                           $i++;; ?>
+                        <?php $i = 0; while ($rData = mysqli_fetch_array($qData)) {
+                           $i++; ?>
                            <tr>
                               <td width="3%"><?php echo $i; ?>.</td>
                               <td style="width: 100px;"><img src="<?php echo (!empty($rData['voucher_url']) ? "../" . $rData['voucher_url'] : "images/no_image.png"); ?>" height="50px"></td>

@@ -295,10 +295,10 @@ CREATE TABLE `property` (
 /*Data for the table `property` */
 
 insert  into `property`(`property_id`,`property_name`,`telp`,`email`,`city`,`address`,`property_url`,`status_hapus`) values 
-('0DZTF6EPZA','OS Style Hotel Batam Centre','(62)778469004','info@orangeskygroup.co.id','Batam','Jl. Raja H. Fisabillilah, Komp. BTC Palm Spring  Blok B1 No 1, Batam Centre, Batam 29432. Kepulauan Riau, Indonesia','uploads/property/0DZTF6EPZA_os_batamcenter.jpg','0'),
-('A6QHXM7D1K','OS Style Hotel Sagulung Batam','0813-6521-2020','info@orangeskygroup.co.id','Batam','Putri Hijau Complex, Jalan Letjen R. Suprapto, Sungai Langkai, Kec. Sagulung, Kota Batam, Kepulauan Riau 29425','uploads/property/A6QHXM7D1K_os_sagulung.jpg','0'),
+('0DZTF6EPZA','OS Style Hotel Batam Centre','(62)778469004','booknow@orangeskygroup.co.id','Batam','Jl. Raja H. Fisabillilah, Komp. BTC Palm Spring  Blok B1 No 1, Batam Centre, Batam 29432. Kepulauan Riau, Indonesia','uploads/property/0DZTF6EPZA_os_batamcenter.jpg','0'),
+('A6QHXM7D1K','OS Style Hotel Sagulung Batam','0813-6521-2020','booknow@orangeskygroup.co.id','Batam','Putri Hijau Complex, Jalan Letjen R. Suprapto, Sungai Langkai, Kec. Sagulung, Kota Batam, Kepulauan Riau 29425','uploads/property/A6QHXM7D1K_os_sagulung.jpg','0'),
 ('CQPXUHAFEM','OS Hotel Batu Aji Batam','(62)7784121004','osbatuaji@gmail.com','Batam','Ruko Limanda Blok D No 1 - 3, Batu Aji, 29348 Batam Center, Indonesia','uploads/property/CQPXUHAFEM_os_batu_aji.jpg','0'),
-('CZRI3Y4YF9','OS Hotel Airport Batam','0823-2243-0555','info@orangeskygroup.co.id','Batam','Komplek Buana Vista Indah 1 Blok K No.100, Belian, Kec. Batam Kota, Kota Batam, Kepulauan Riau 29464','uploads/property/CZRI3Y4YF9_os_airport.jpg','0');
+('CZRI3Y4YF9','OS Hotel Airport Batam','0823-2243-0555','booknow@orangeskygroup.co.id','Batam','Komplek Buana Vista Indah 1 Blok K No.100, Belian, Kec. Batam Kota, Kota Batam, Kepulauan Riau 29464','uploads/property/CZRI3Y4YF9_os_airport.jpg','0');
 
 /*Table structure for table `room` */
 
@@ -407,7 +407,7 @@ CREATE TABLE `setting` (
 /*Data for the table `setting` */
 
 insert  into `setting`(`setting_id`,`phone`,`email`,`address`,`youtube`,`instagram`,`facebook`,`twitter`,`usd`,`last_update`) values 
-('RETWGBHYJK','0811-6687-008','info@orangeskygroup.co.id','Komplek Palm Spring Business Trade Centre, Jl. Gajah Mada No.1 - 3, Taman Baloi, Batam Kota, Batam City, Riau Islands 29432',NULL,'https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.instagram.com/orangeskyindonesia/&ved=2ahUKEwjygsvvv4aNAxWHyzgGHdbZOPoQ9zB6BAgnEAM&usg=AOvVaw2sfN2mg27OZNR1WWq22o_4',NULL,NULL,16459,'2025-05-07');
+('RETWGBHYJK','0811-6687-008','booknow@orangeskygroup.co.id','Komplek Palm Spring Business Trade Centre, Jl. Gajah Mada No.1 - 3, Taman Baloi, Batam Kota, Batam City, Riau Islands 29432',NULL,'https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://www.instagram.com/orangeskyindonesia/&ved=2ahUKEwjygsvvv4aNAxWHyzgGHdbZOPoQ9zB6BAgnEAM&usg=AOvVaw2sfN2mg27OZNR1WWq22o_4',NULL,NULL,16459,'2025-05-07');
 
 /*Table structure for table `users` */
 

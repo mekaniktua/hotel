@@ -9,17 +9,21 @@ $adult =  dekripsi(amankan($_POST['adult'] ?? 1));
 $child = dekripsi(amankan($_POST['child'] ?? 0));
 $rooms = dekripsi(amankan($_POST['rooms'] ?? 1));
 $total_price = dekripsi(amankan($_POST['tp'] ?? 0));
+$start_date = (amankan($_POST['start_date'] ?? ''));
+$end_date = (amankan($_POST['end_date'] ?? ''));
+
+$nights = lama($start_date, $end_date);
 
 if(!isset($adult) || !isset($child) || !isset($rooms) || !isset($total_price)){
   $pesan = "Failed booking. Please make other booking";
 }else{
 
   if($_SESSION['osg_currency'] != 'IDR'){
-    $total_price = round($total_price,1) * $rooms;
+    $total_price = round($total_price,1) * $rooms * $nights;
     $total_nilai_rupiah = $total_price * $_SESSION['nilai_rupiah'];
     
   }else{
-    $total_price = intval($total_price) * intval($rooms);
+    $total_price = intval($total_price) * intval($rooms) * $nights;
     $total_nilai_rupiah = $total_price; 
   }
   $point_earned = (($_SESSION['persen_booking_point'] * $total_nilai_rupiah / 100)/$_SESSION['nilai_per_point']);
@@ -27,8 +31,6 @@ if(!isset($adult) || !isset($child) || !isset($rooms) || !isset($total_price)){
   if (empty($child)) {
     $child = 0;
   }
-  $start_date = (amankan($_POST['start_date']));
-  $end_date = (amankan($_POST['end_date']));
 
   $sData  = " SELECT k.*
               FROM room k
@@ -44,8 +46,10 @@ if(!isset($adult) || !isset($child) || !isset($rooms) || !isset($total_price)){
   }
   if (empty($pesan)) {
     $booking_id = randomText(10);
+    $invoice_number = date('YmdHis').rand(0,9);
     $sInsert  = " INSERT INTO booking
                     SET booking_id='" . $booking_id . "',
+                        invoice_number='" . $invoice_number . "',
                         created_date='" . date('Y-m-d H:i:s') . "', 
                         start_date='" . $start_date . "', 
                         end_date='" . $end_date . "',
@@ -53,6 +57,7 @@ if(!isset($adult) || !isset($child) || !isset($rooms) || !isset($total_price)){
                         room_type_id='" . $room_type_id . "',
                         property_id='" . $property_id . "',
                         rooms=" . $rooms . ",
+                        nights=" . $nights . ",
                         adult=" . $adult . ",
                         child=" . $child . ",
                         member_id='" . $member_id . "',

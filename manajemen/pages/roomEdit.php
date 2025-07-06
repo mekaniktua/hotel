@@ -3,7 +3,7 @@ $property_id = dekripsi(amankan($_GET['prID']));
 $room_type_id = dekripsi(amankan($_GET['tkID']));
 $room_id = dekripsi(amankan($_GET['kID']));
 
-$stmt = $conn->prepare("SELECT p.property_name, p.address, tk.room_type, k.nomor, k.status, k.keterangan 
+$stmt = $conn->prepare("SELECT p.property_name, p.address, tk.room_type, k.room_name, k.status, k.description, k.total, k.bed, k.adult, k.child, k.is_breakfast, k.is_smoking, k.is_wifi, k.is_fitness, k.is_parking 
                         FROM property p
                         JOIN room_type tk ON tk.property_id = p.property_id 
                         JOIN room k ON tk.room_type_id = k.room_type_id 
@@ -14,7 +14,7 @@ $stmt->bind_param("sss", $property_id, $room_type_id, $room_id);
 $stmt->execute();
 
 // Bind hasil ke variabel
-$stmt->bind_result($property_name, $address, $room_type, $nomor, $status, $keterangan);
+$stmt->bind_result($property_name, $address, $room_type, $room_name, $status, $description, $total, $bed, $adult, $child, $is_breakfast, $is_smoking, $is_wifi, $is_fitness, $is_parking);
 $stmt->fetch();
 
 // Simpan hasil dalam array (seperti fetch_assoc)
@@ -22,9 +22,18 @@ $row = [
     'property_name' => $property_name,
     'address'       => $address,
     'room_type'     => $room_type,
-    'nomor'         => $nomor,
+    'room_name'     => $room_name,
     'status'        => $status,
-    'keterangan'    => $keterangan
+    'description'   => $description,
+    'total'         => $total,
+    'bed'           => $bed,
+    'adult'         => $adult,
+    'child'         => $child,
+    'is_breakfast'  => $is_breakfast,
+    'is_smoking'    => $is_smoking,
+    'is_wifi'       => $is_wifi,
+    'is_fitness'    => $is_fitness,
+    'is_parking'    => $is_parking
 ];
 
 $stmt->close();
@@ -70,27 +79,89 @@ $stmt->close();
                         <form id="frmSave" method="post">
                            <table class="table">
                               <tr>
-                                 <td><label>Nomor Room</label><br />
-                                    <input type="hidden" class="form-control" name="prID" value="<?php echo enkripsi($property_id); ?>">
+                                 <td colspan="4"><label>ROOM NAME</label><br />
+                                 <input type="hidden" class="form-control" name="prID" value="<?php echo enkripsi($property_id); ?>">
                                     <input type="hidden" class="form-control" name="tkID" value="<?php echo enkripsi($room_type_id); ?>">
                                     <input type="hidden" class="form-control" name="kID" value="<?php echo enkripsi($room_id); ?>">
                                     <input type="hidden" class="form-control" name="jenis" value="<?php echo enkripsi('Edit'); ?>">
-                                    <input type="text" class="form-control" name="nomor" value="<?php echo $row['nomor'] ?>">
+                                    <input type="text" class="form-control" name="room_name" value="<?php echo $row['room_name']; ?>">
                                  </td>
-                                 <td><label>Status</label><br />
+                              </tr>
+                              <tr>
+                                 <td style="width: 25%;"><label>STATUS</label><br />
                                     <select name="status" class="select2_single form-control" style="width: 100%;">
-                                       <option value="Ready" <?php if ($row['status'] == 'Ready') echo "SELECTED"; ?>>Ready</option>
-                                       <option value="Not Ready" <?php if ($row['status'] == 'Not Ready') echo "SELECTED"; ?>>Not Ready</option>
+                                       <option value="Publish" <?php echo ($row['status'] == 'Publish' ? 'selected' : ''); ?>>Publish</option>
+                                       <option value="Draft" <?php echo ($row['status'] == 'Draft' ? 'selected' : ''); ?>>Draft</option>
+                                    </select>
+                                 </td>
+                                 <td style="width: 25%;"><label>BREAKFAST?</label><br />
+                                    <select name="is_breakfast" class="select2_single form-control" style="width: 100%;">
+                                       <option value="0" <?php echo ($row['is_breakfast'] == '0' ? 'selected' : ''); ?>>Not Include</option>
+                                       <option value="1" <?php echo ($row['is_breakfast'] == '1' ? 'selected' : ''); ?>>Included</option>
+                                    </select>
+                                 </td>
+                                 <td style="width: 25%;"><label>SMOKING?</label><br />
+                                    <select name="is_smoking" class="select2_single form-control" style="width: 100%;">
+                                       <option value="0" <?php echo ($row['is_smoking'] == '0' ? 'selected' : ''); ?>>Not Smoking Room</option>
+                                       <option value="1" <?php echo ($row['is_smoking'] == '1' ? 'selected' : ''); ?>>Smoking Room</option>
+                                    </select>
+                                 </td>
+                                 <td style="width: 25%;"><label>WIFI?</label><br />
+                                    <select name="is_wifi" class="select2_single form-control" style="width: 100%;">
+                                       <option value="0" <?php echo ($row['is_wifi'] == '0' ? 'selected' : ''); ?>>No Wifi</option>
+                                       <option value="1" <?php echo ($row['is_wifi'] == '1' ? 'selected' : ''); ?>>Free Wifi</option>
                                     </select>
                                  </td>
                               </tr>
                               <tr>
-                                 <td colspan="2"><label>Keterangan</label><br />
-                                    <input type="text" class="form-control" name="keterangan" value="<?php echo $row['keterangan'] ?>">
+                                 <td><label>FITNESS?</label><br />
+                                    <select name="is_fitness" class="select2_single form-control" style="width: 100%;">
+                                       <option value="0" <?php echo ($row['is_fitness'] == '0' ? 'selected' : ''); ?>>Not Included</option>
+                                       <option value="1" <?php echo ($row['is_fitness'] == '1' ? 'selected' : ''); ?>>Free Access Fitness</option>
+                                    </select>
+                                 </td>
+                                 <td><label>PARKING?</label><br />
+                                    <select name="is_parking" class="select2_single form-control" style="width: 100%;">
+                                       <option value="0" <?php echo ($row['is_parking'] == '0' ? 'selected' : ''); ?>>Pay Parking</option>
+                                       <option value="1" <?php echo ($row['is_parking'] == '1' ? 'selected' : ''); ?>>Free Parking</option>
+                                    </select>
+                                 </td>
+                                 <td><label>ADULT</label><br />
+                                    <select name="adult" class="select2_single form-control" style="width: 100%;">
+                                       <option value="1" <?php echo ($row['adult'] == '1' ? 'selected' : ''); ?>>1 adult</option>
+                                       <option value="2" <?php echo ($row['adult'] == '2' ? 'selected' : ''); ?>>2 adult</option>
+                                       <option value="3" <?php echo ($row['adult'] == '3' ? 'selected' : ''); ?>>3 adult</option>
+                                       <option value="4" <?php echo ($row['adult'] == '4' ? 'selected' : ''); ?>>4 adult</option>
+                                       <option value="5">5 adult</option>
+                                    </select>
+                                 </td>
+                                 <td><label>CHILD</label><br />
+                                    <select name="child" class="select2_single form-control" style="width: 100%;">
+                                       <option value="0" <?php echo ($row['child'] == '0' ? 'selected' : ''); ?>>No Child</option>
+                                       <option value="1" <?php echo ($row['child'] == '1' ? 'selected' : ''); ?>>1 Child</option>
+                                       <option value="2" <?php echo ($row['child'] == '2' ? 'selected' : ''); ?>>2 Child(s)</option>
+                                       <option value="3" <?php echo ($row['child'] == '3' ? 'selected' : ''); ?>>3 Child(s)</option>
+                                    </select>
                                  </td>
                               </tr>
                               <tr>
-                                 <td colspan="2">
+
+                                 <td colspan="2"><label>DESCRIPTION</label><br />
+                                    <input type="text" class="form-control" name="description" value="<?php echo $row['description']; ?>">
+                                 </td>
+                                 <td><label>BED TYPE</label><br />
+                                    <select name="bed" class="select2_single form-control" style="width: 100%;">
+                                       <option value="King" <?php echo ($row['bed'] == 'King' ? 'selected' : ''); ?>>King</option>
+                                       <option value="Queen" <?php echo ($row['bed'] == 'Queen' ? 'selected' : ''); ?>>Queen</option>
+                                       <option value="Twin" <?php echo ($row['bed'] == 'Twin' ? 'selected' : ''); ?>>Twin</option>
+                                    </select>
+                                 </td>
+                                 <td><label>Total</label><br />
+                                    <input type="text" class="form-control" name="total" value="<?php echo $row['total']; ?>" required>
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <td colspan="4">
                                     <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Save</button>
                                     <button type="button" onclick="back()" class="btn btn-danger"><i class="fa fa-chevron-left"></i> Back</button>
                                  </td>
@@ -160,9 +231,7 @@ $stmt->close();
          },
          success: function(data) {
             $("#modalInfo").modal('show');
-            $("#modalInfo").on("hidden.bs.modal", function() {
-               back();
-            });
+           
             $("#ajaxInfo").html(data);
 
          },

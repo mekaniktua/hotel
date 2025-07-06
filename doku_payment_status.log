@@ -1,0 +1,14 @@
+==== DOKU SIGNATURE DEBUG ====
+Timestamp: 2025-07-02T23:35:15Z
+Client-Id: BRN-0241-1750062235338
+Request-Id: req_6865c2335aa3b
+Full URL: https://api-sandbox.doku.com/checkout/v1/order/status/INV-202507030632557
+Signature Component:
+Client-Id:BRN-0241-1750062235338
+Request-Id:req_6865c2335aa3b
+Request-Timestamp:2025-07-02T23:35:15Z
+Request-Target:/checkout/v1/order/status/INV-202507030632557
+
+Signature: HMACSHA256=Z7zuRmBO054YBOcj4uFP4HpIFBU4hk6QGdQD1DDtwA8=
+Expected Signature:
+HMACSHA256=Z7zuRmBO054YBOcj4uFP4HpIFBU4hk6QGdQD1DDtwA8=

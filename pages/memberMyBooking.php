@@ -15,7 +15,7 @@
     }
 
     .custom-tabs .nav-link.active {
-        background-color: #FEA116;
+        background-color: #c0a751;
         color: #fff;
         font-weight: bold;
     }
@@ -64,6 +64,20 @@
         </button>
     </li>
 </ul>
+
+<div class="modal fade" id="modalReview" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="myModalLabel">Write Review</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div id="ajaxReview"></div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Tab Content -->
 <div class="tab-content p-4 border border-top-0 rounded-bottom" style="box-shadow: 0 0 45px rgba(0, 0, 0, .08);" id="myTabContent">

@@ -4,6 +4,8 @@ include("../../manajemen/database.php");
 include("../../kirimMail.php");
 
 $email = (amankan($_POST['umail']));
+$name = (amankan($_POST['name']));
+$mobile_number = (amankan($_POST['mobile_number']));
 $password = (amankan($_POST['upass']));
 $confirm_password = (amankan($_POST['confirmUpass']));
 
@@ -34,7 +36,7 @@ if (empty($pesan)) {
   $confirmation_code = randomAngka(6);
   $sender = "noreply@orangesky.id";
   $enc_email = enkripsi($email);
-  $emailStatus = registration($sender, $email, 'Registration Activation', $enc_email, $address, $phone);
+  $emailStatus = registration($sender, $email, 'Registration Activation', $enc_email, $name, $mobile_number);
 
   if ($emailStatus == 1) {
     $sInsert  = " INSERT INTO member
@@ -42,6 +44,9 @@ if (empty($pesan)) {
                     created_date='" . date("Y-m-d H:i:s") . "',
                     email='" . $email . "',
                     status='Pending',
+                    name='" . $name . "',
+                    mobile_number='" . $mobile_number . "',
+                    point=500,
                     member_type='Silver', 
                     member_type_date='" . date("Y-m-d H:i:s") . "',
                     password='" . md5($password) . "',

@@ -31,7 +31,7 @@
                                  <button class="btn btn-primary w-100 py-3">Login</button>
                              </div>
                              <hr />
-                             <p>
+                             <p> 
                                  Resend activation link? <a href="?menu=resend">Click here</a><br />
                                  Don't have an account? <a href="?menu=signup">Sign up here</a>
                              </p>

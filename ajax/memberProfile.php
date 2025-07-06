@@ -39,7 +39,7 @@ if (empty($fullname)) {
                       gender='" . $gender . "'
                 WHERE member_id='" . $member_id . "'";
   $qUpdate = mysqli_query($conn, $sUpdate) or die(mysqli_error($conn));             
-  $pesanSukses = "Data telah disimpan";
+  $pesanSukses = "Data has been saved";
 }
 ?>
 

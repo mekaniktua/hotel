@@ -1,13 +1,12 @@
 <?php
-$property_id = dekripsi(amankan($_GET['prID']));
+$property_id = dekripsi(amankan($_GET['prID'] ?? ''));
 
-$stmt = $conn->prepare("SELECT * FROM property WHERE property_id = ?");
+$stmt = $conn->prepare("SELECT property_name, address FROM property WHERE property_id = ?");
 $stmt->bind_param("s", $property_id);
 $stmt->execute();
 
 // Bind hasil ke variabel (sesuaikan kolom di tabel property)
-$stmt->bind_result($property_name, $address);
-$stmt->fetch();
+$stmt->bind_result($property_name, $address); 
 
 // Anda bisa simpan hasil ke array, misalnya:
 if ($stmt->fetch()) {   
@@ -16,12 +15,15 @@ if ($stmt->fetch()) {
        'address'       => $address,
    ];
 } else {
-   echo "No data found.";
+   $pesan = "No data found.";
 }
 
 $stmt->close();
 
 
+if(!empty($pesan)){
+   echo "<script>alert('No data found.');</script>";
+}else{
 ?>
 
 <div class="midde_cont">
@@ -43,11 +45,11 @@ $stmt->close();
                      <table class="table table-striped">
                         <tr>
                            <th>PROPERTY NAME</th>
-                           <td><?php echo $rData['property_name']; ?></td>
+                           <td><?php echo $rData['property_name'] ?? ''; ?></td>
                         </tr>
                         <tr>
                            <th>ADDRESS</th>
-                           <td><?php echo $rData['address']; ?></td>
+                              <td><?php echo $rData['address'] ?? ''; ?></td>
                         </tr>
                      </table>
                   </div>
@@ -111,6 +113,8 @@ $stmt->close();
       </div>
    </div>
 </div>
+
+<?php }?>
 
 
 <script>

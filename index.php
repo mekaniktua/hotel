@@ -49,7 +49,9 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
     <!-- Google Web Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
 
     <!-- Icon Font Stylesheet -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
@@ -59,8 +61,10 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
     <!-- Libraries Stylesheet -->
     <link href="lib/animate/animate.min.css" rel="stylesheet">
     <!-- Owl Carousel CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css" />
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css" />
 
     <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
@@ -102,8 +106,8 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
     <script src="js/select2.min.js"></script>
     <script src="js/blockUI.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.4/js/lightbox.min.js"></script>
-<!-- Swiper JS -->
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
 
 
@@ -123,8 +127,9 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
         <div class="container-fluid bg-dark px-0">
             <div class="row gx-0">
                 <div class="col-lg-3 bg-dark d-none d-lg-block">
-                    <a href="./" class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
-                        <h1 class="m-0 text-primary text-uppercase" style="font-size: 45px;">OrangeSky</h1>
+                    <a href="./"
+                        class="navbar-brand w-100 h-100 m-0 p-0 d-flex align-items-center justify-content-center">
+                        <h1 class="m-0 text-primary text-uppercase" style="font-size: 40px;">OrangeSky.id</h1>
                     </a>
                 </div>
                 <div class="col-lg-9">
@@ -142,47 +147,89 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
                         </div>
                         <div class="col-lg-5 px-5 text-end">
                             <div class="d-inline-flex align-items-center py-2">
-                                <a class="me-3" href="<?php echo $setting['facebook'] ?>"><i class="fab fa-facebook-f"></i></a>
-                                <a class="me-3" href="<?php echo $setting['twitter'] ?>"><i class="fab fa-twitter"></i></a>
-                                <a class="me-3" href="<?php echo $setting['instagram'] ?>"><i class="fab fa-instagram"></i></a>
+                                <a class="me-3" href="<?php echo $setting['facebook'] ?>"><i
+                                        class="fab fa-facebook-f"></i></a>
+                                <a class="me-3" href="<?php echo $setting['twitter'] ?>"><i
+                                        class="fab fa-twitter"></i></a>
+                                <a class="me-3" href="<?php echo $setting['instagram'] ?>"><i
+                                        class="fab fa-instagram"></i></a>
                                 <a class="" href="<?php echo $setting['youtube'] ?>"><i class="fab fa-youtube"></i></a>
                             </div>
                         </div>
                     </div>
-                    <nav class="navbar navbar-expand-lg bg-dark navbar-dark p-3 p-lg-0">
-                        <a href="./" class="navbar-brand d-block d-lg-none">
-                            <h1 class="m-0 text-primary text-uppercase">OrangeSky</h1>
-                        </a>
-                        <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#navbarCollapse">
-                            <span class="navbar-toggler-icon"></span>
-                        </button>
-                        <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
-                            <div class="navbar-nav mr-auto py-0">
-                                <a href="./" class="nav-item nav-link active">Home</a>
-                                <a href="./?menu=voucher" class="nav-item nav-link">Voucher</a>
-                                <a href="./merchant" class="nav-item nav-link">Merchant</a>
-                                <a href="./?menu=contactUs" class="nav-item nav-link">Contact Us</a>
-                                <?php if($menu!='booking'){?>
-                                <div class="nav-item dropdown">
-                                    <a href="#" class="nav-link dropdown-toggle" id="currencyDropdown" data-bs-toggle="dropdown" aria-expanded="false"><?php echo $_SESSION['osg_currency']; ?></a>
-                                    <ul class="dropdown-menu" aria-labelledby="currencyDropdown">
-                                        <?php while($rCurrency = mysqli_fetch_array($qCurrency)){$currency = $rCurrency['currency'];?>
-                                        <li><a class="dropdown-item" href="<?php echo getFullUrl($currency) ?>" data-currency="<?php echo $currency;?>"> <?php echo $currency?> <?php if ($_SESSION['osg_currency'] == $currency) echo '<i class="fa fa-check"></i>'; ?></a></li>
-                                        <?php }?>
-                                    </ul>
-                                </div>
-                                <?php }?>
+                    <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+                        <div class="container-fluid">
 
+                            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                                data-bs-target="#navbarCollapse">
+                                <span class="navbar-toggler-icon"></span>
+                            </button>
+
+                            <div class="collapse navbar-collapse justify-content-between" id="navbarCollapse">
+                                <!-- Nav Menu -->
+                                <ul class="navbar-nav mb-2 mb-lg-0">
+                                    <li class="nav-item">
+                                        <a href="./" class="nav-link <?php echo $menu == '' ? 'active' : '' ?>"><i
+                                                class="fa fa-home me-1"></i> Home</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a href="./?menu=voucher"
+                                            class="nav-link <?php echo $menu == 'voucher' ? 'active' : '' ?>"><i
+                                                class="fa fa-ticket me-1"></i> Voucher</a>
+                                    </li>
+                                    <!-- <li class="nav-item">
+                                        <a href="./merchant" class="nav-link"><i class="fa fa-building me-1"></i>
+                                            Merchant</a>
+                                    </li> -->
+                                    <li class="nav-item">
+                                        <a href="./?menu=contactUs"
+                                            class="nav-link <?php echo $menu == 'contactUs' ? 'active' : '' ?>"><i
+                                                class="fa fa-envelope me-1"></i> Contact Us</a>
+                                    </li>
+
+                                    <!-- Currency Dropdown -->
+                                    <?php if($menu != 'booking'){ ?>
+                                    <li class="nav-item dropdown">
+                                        <a class="nav-link dropdown-toggle" href="#" id="currencyDropdown" role="button"
+                                            data-bs-toggle="dropdown">
+                                            <i class="fa fa-coin me-1"></i> <?php echo $_SESSION['osg_currency']; ?>
+                                        </a>
+                                        <ul class="dropdown-menu">
+                                            <?php while($rCurrency = mysqli_fetch_array($qCurrency)) {
+                            $currency = $rCurrency['currency']; ?>
+                                            <li>
+                                                <a class="dropdown-item" href="<?php echo getFullUrl($currency) ?>"
+                                                    data-currency="<?php echo $currency; ?>">
+                                                    <?php echo $currency ?>
+                                                    <?php if ($_SESSION['osg_currency'] == $currency) echo '<i class="fa fa-check text-success ms-2"></i>'; ?>
+                                                </a>
+                                            </li>
+                                            <?php } ?>
+                                        </ul>
+                                    </li>
+                                    <?php } ?>
+                                </ul>
+
+                                <!-- Account Button (Responsive) -->
+                                <div class="d-flex" style="margin-right: 10px;">
+                                    <?php if (!empty($_SESSION['osg_member_id'])) { ?>
+                                    <a href="?menu=member" class="btn btn-outline-primary rounded-pill px-4 me-2">
+                                        <i class="fa fa-user me-1"></i> My Account
+                                    </a>
+                                    <?php } else if (!empty($_SESSION['osg_merchant_id'])) { ?>
+                                    <a href="./merchant" class="btn btn-outline-primary rounded-pill px-4 me-2">
+                                        <i class="fa fa-user me-1"></i> My Account
+                                    </a>
+                                    <?php } else { ?>
+                                    <a href="login/" class="btn btn-primary rounded-pill px-4 me-2">
+                                        <i class="fa fa-sign-in me-1"></i> Login / Sign Up
+                                    </a>
+                                    <?php } ?>
+                                </div>
                             </div>
-                            <?php if (!empty($_SESSION['osg_member_id'])) { ?>
-                                <a href="?menu=member" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block"><i class="fa fa-user ms-3"></i> My Account</a>
-                            <?php }else if (!empty($_SESSION['osg_merchant_id'])) { ?>
-                                <a href="./merchant" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block"><i class="fa fa-user ms-3"></i> My Account</a>
-                            <?php } else { ?>
-                                <a href="login/" class="btn btn-primary rounded-0 py-4 px-md-5 d-none d-lg-block"><i class="fa fa-user ms-3"></i> Login/ Sign Up</a>
-                            <?php } ?>
                         </div>
                     </nav>
+
                 </div>
             </div>
         </div>
@@ -201,7 +248,7 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
                             </a>
                             <p class="text-white mb-0">
 
-                                Enjoy the best service with us. Have your experiences and get the vouchers.</p>
+                            Your Journey Starts Under the Orange Sky.</p>
 
                             </p>
                         </div>
@@ -212,10 +259,14 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
                         <p class="mb-2"><i class="fas fa-phone-alt me-3"></i><?php echo $setting['phone'] ?></p>
                         <p class="mb-2"><i class="fa fa-envelope me-3"></i><?php echo $setting['email'] ?></p>
                         <div class="d-flex pt-2">
-                            <a class="btn btn-outline-light btn-social" href="<?php echo $setting['twitter'] ?>"><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-outline-light btn-social" href="<?php echo $setting['facebook'] ?>"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-outline-light btn-social" href="<?php echo $setting['youtube'] ?>"><i class="fab fa-youtube"></i></a>
-                            <a class="btn btn-outline-light btn-social" href="<?php echo $setting['instagram'] ?>"><i class="fab fa-instagram"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="<?php echo $setting['twitter'] ?>"><i
+                                    class="fab fa-twitter"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="<?php echo $setting['facebook'] ?>"><i
+                                    class="fab fa-facebook-f"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="<?php echo $setting['youtube'] ?>"><i
+                                    class="fab fa-youtube"></i></a>
+                            <a class="btn btn-outline-light btn-social" href="<?php echo $setting['instagram'] ?>"><i
+                                    class="fab fa-instagram"></i></a>
                         </div>
                     </div>
                     <!-- <div class="col-lg-5 col-md-12">
@@ -244,7 +295,8 @@ $qCurrency = mysqli_query($conn, $sCurrency) or die(mysqli_error($conn));
                 <div class="copyright">
                     <div class="row">
                         <div class="col-md-6 text-center text-md-start mb-3 mb-md-0">
-                            &copy; <a class="border-bottom" href="./">OrangeSkyID</a>, All Right Reserved<a class="border-bottom" href="https://htmlcodex.com">.</a>
+                            &copy; <a class="border-bottom" href="./">OrangeSkyID</a>, All Right Reserved<a
+                                class="border-bottom" href="https://htmlcodex.com">.</a>
 
                         </div>
                         <div class="col-md-6 text-center text-md-end">

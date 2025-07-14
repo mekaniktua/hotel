@@ -40,7 +40,7 @@ if (is_array($spaces)) {
 $sData  = " SELECT tk.* 
             FROM property p
             JOIN room_type tk ON tk.property_id=p.property_id
-            WHERE p.status_hapus='0' and p.property_id='" . $property_id . "' " . (!empty($queryTipeKamar) ? $queryTipeKamar : '') . (!empty($querySpace) ? $querySpace : '') . "  
+            WHERE p.status_hapus='0' and tk.status_hapus='0' and p.property_id='" . $property_id . "' " . (!empty($queryTipeKamar) ? $queryTipeKamar : '') . (!empty($querySpace) ? $querySpace : '') . "  
             ORDER BY tk.price";
 $qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
 
@@ -94,7 +94,7 @@ while ($rData = mysqli_fetch_array($qData)) {
           <div class="row">
             <?php while ($rFasilitas = mysqli_fetch_array($qFasilitas)) { ?>
               <div class="col-md-6 mb-2">
-                <?php echo $rFasilitas['facility_name']; ?>
+                <?php //echo $rFasilitas['facility_name']; ?>
               </div>
             <?php } ?>
           </div>
@@ -145,9 +145,16 @@ while ($rData = mysqli_fetch_array($qData)) {
 
                 //check if room is available
                 $sCheckRoom = " SELECT sum(rooms) as total_booked 
-                                FROM booking WHERE room_id ='" . $rKamar['room_id'] . "' AND start_date >= '" . $end_date . "' AND end_date <= '" . $start_date . "' AND status_hapus='0' and status<>'Expired'";  
+                                FROM booking WHERE room_id ='" . $rKamar['room_id'] . "' AND NOT (
+                                end_date < '" . ($start_date) . "'
+                                OR start_date > '" . ($end_date) . "'
+                                ) AND status_hapus='0' and status<>'Expired'";  
                 $qCheckRoom = mysqli_query($conn, $sCheckRoom) or die(mysqli_error($conn));
                 $rCheckRoom = mysqli_fetch_array($qCheckRoom);
+                //price up 1% per 2 booking in same date
+                $price_up = 0;
+                $price_up = $avg_price * (1 + ($rCheckRoom['total_booked'] / 2) * 0.01);
+                $avg_price = $price_up;//set avg price to price up
                 $roomAvailable = $min_total_room - $rCheckRoom['total_booked']; 
 
                 if ($roomAvailable > 0) {

@@ -1,3 +1,9 @@
+<?php 
+$stmtMerchantType = mysqli_prepare($conn, "SELECT * FROM merchant_type WHERE status_hapus = '0'");
+mysqli_stmt_execute($stmtMerchantType);
+$qMerchantType = mysqli_stmt_get_result($stmtMerchantType);
+?>
+
 <div class="midde_cont">
    <div class="container-fluid">
       <div class="row column_title">
@@ -37,6 +43,15 @@
                               <div class="col-md-6 form-group">
                                  <label>PHONE</label>
                                  <input type="text" name="phone" id="phone" class="form-control" required>
+                              </div>
+                              <div class="col-md-12 form-group">
+                                 <label>MERCHANT TYPE</label>
+                                 <select name="merchant_type" class="form-control">
+                                    <option value="">Select Merchant Type</option>
+                                    <?php while ($rMerchantType = mysqli_fetch_array($qMerchantType)) { ?>
+                                       <option value="<?php echo $rMerchantType['merchant_type']; ?>"><?php echo $rMerchantType['merchant_type']; ?></option>
+                                    <?php } ?>
+                                 </select>
                               </div>
 
                               <div class="col-md-12 form-group">

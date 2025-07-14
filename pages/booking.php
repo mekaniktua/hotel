@@ -67,6 +67,25 @@ $max_point_used = round(($_SESSION['persen_max_point'] * $rData['total_nilai_rup
 
 <!-- Service Start -->
 <div class="container-fluid py-5" style="margin-bottom: 100px;">
+<style>
+/* Mobile floating button styles */
+@media (max-width: 991.98px) {
+    .container-fluid {
+        padding-bottom: 100px; /* Add space for floating button */
+    }
+    
+    /* Ensure floating button stays on top */
+    .position-fixed {
+        position: fixed !important;
+    }
+    
+    /* Smooth transition for button states */
+    .btn:disabled {
+        opacity: 0.6;
+        transition: opacity 0.3s ease;
+    }
+}
+</style>
     <div class="container-fluid">
         <div class="text-center wow fadeInUp" data-wow-delay="0.1s">
             <h6 class="section-title text-center text-primary text-uppercase">Booking</h6>
@@ -95,7 +114,8 @@ $max_point_used = round(($_SESSION['persen_max_point'] * $rData['total_nilai_rup
                         <div class="row g-4 mt-1">
                             <div class="col-md-12 wow fadeInUp" data-wow-delay="0.1s">
                                 <textarea id="special_request" class="form-control" rows="5"
-                                    placeholder="Type your request here"></textarea>
+                                    placeholder="Type your request here" maxlength="1000"></textarea>
+                                    <small class="text-muted" id="specialRequestCounter">0/1000</small> 
                             </div>
                         </div>
                     </div>
@@ -128,19 +148,15 @@ $max_point_used = round(($_SESSION['persen_max_point'] * $rData['total_nilai_rup
                 </div>
                 <div class="card mb-3" style="box-shadow: 0 0 45px rgba(0, 0, 0, .08);">
                     <div class="card-body">
-                        <h5 class="mb-0 fs-5"><i class="fas fa-solid fa-money me-2"></i>Payment Method</h5>
-                        <small>Select your payment method.</small>
+                        <h5 class="mb-0 fs-5"><i class="fas fa-solid fa-money me-2"></i>Confirmation</h5> 
                         <form id="frmSimpan" method="post" action="">
                             <input type="hidden" name="bID" id="bID"
                                 value="<?php echo enkripsi($rData['booking_id']); ?>">
-                            <div class="row g-4 mt-1">
+                                 
+                            <div class="row g-4">
                                 <div class="col-md-12 wow fadeInUp" data-wow-delay="0.1s">
-                                    <select class="select2_single form-select" name="payment_method" id="payment_method"
-                                        aria-label="Default select example">
-                                        <option value="PayNow">Pay Now</option>
-                                        <option value="PayHotel">Pay at Hotel</option>
-                                    </select>
-                                    <button class="btn btn-primary btn-lg mt-3" style="width: 100%;"
+                                     
+                                    <button class="btn btn-primary btn-lg mt-3 d-none d-lg-block" style="width: 100%;"
                                         id="btnConfirm">Confirm Booking</button>
                                 </div>
                             </div>
@@ -148,89 +164,90 @@ $max_point_used = round(($_SESSION['persen_max_point'] * $rData['total_nilai_rup
 
                     </div>
                 </div>
+                
                 <?php }else{ //card login?>
                 <div class="card mb-3" style="box-shadow: 0 0 45px rgba(0, 0, 0, .08);">
                     <div class="card-body">
                          <!-- Bootstrap 5 Nav Tabs -->
-<ul class="nav nav-tabs justify-content-center mb-4" id="authTabs" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab">
-    <i class="bi bi-box-arrow-in-right me-2"></i>Login
-    </button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab">
-    <i class="bi bi-person-plus-fill me-2"></i> Sign Up
-    </button>
-  </li>
-</ul>
+                        <ul class="nav nav-tabs justify-content-center mb-4" id="authTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>Login
+                            </button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="signup-tab" data-bs-toggle="tab" data-bs-target="#signup" type="button" role="tab">
+                            <i class="bi bi-person-plus-fill me-2"></i> Sign Up
+                            </button>
+                        </li>
+                        </ul>
 
-<!-- Tab Content -->
-<div class="tab-content" id="authTabsContent">
+                        <!-- Tab Content -->
+                        <div class="tab-content" id="authTabsContent">
 
-  <!-- Login Tab -->
-  <div class="tab-pane fade show active" id="login" role="tabpanel">
-    <h5 class="mb-0 fs-5"><i class="fas fa-user me-2"></i>Login</h5>
-    <small>Please login to continue.</small>
-    <form id="frmLogin" method="post">
-      <div class="row g-4 mt-1">
-        <div class="col-md-12">
-          <input type="hidden" name="bID" id="bID" value="<?php echo enkripsi($booking_id); ?>">
-          <input type="text" class="form-control" name="umail" id="email" placeholder="Email">
-        </div>
-        <div class="col-md-12">
-          <div class="input-group">
-            <input type="password" class="form-control" name="upass" id="upass" placeholder="Password">
-            <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-              <i class="bi bi-eye"></i>
-            </button>
-          </div>
-        </div>
-        <div class="col-md-12 text-center">
-          <div class="d-grid gap-3 mt-3">
-            <button class="btn btn-primary btn-lg" id="btnLogin">
-              <i class="bi bi-box-arrow-in-right me-2"></i> Login
-            </button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
+                        <!-- Login Tab -->
+                        <div class="tab-pane fade show active" id="login" role="tabpanel">
+                            <h5 class="mb-0 fs-5"><i class="fas fa-user me-2"></i>Login</h5>
+                            <small>Please login to continue.</small>
+                            <form id="frmLogin" method="post">
+                            <div class="row g-4 mt-1">
+                                <div class="col-md-12">
+                                <input type="hidden" name="bID" id="bID" value="<?php echo enkripsi($booking_id); ?>">
+                                <input type="text" class="form-control" name="umail" id="email" placeholder="Email">
+                                </div>
+                                <div class="col-md-12">
+                                <div class="input-group">
+                                    <input type="password" class="form-control" name="upass" id="upass" placeholder="Password">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePassword">
+                                    <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                </div>
+                                <div class="col-md-12 text-center">
+                                <div class="d-grid gap-3 mt-3">
+                                    <button class="btn btn-primary btn-lg" id="btnLogin">
+                                    <i class="bi bi-box-arrow-in-right me-2"></i> Login
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
 
-  <!-- Sign Up Tab -->
-  <div class="tab-pane fade" id="signup" role="tabpanel">
-    <h5 class="mb-0 fs-5"><i class="fas fa-user-plus me-2"></i>Sign Up</h5>
-    <small>Create a new account.</small>
-    <form id="frmSignUp" method="post">
-      <div class="row g-4 mt-1">
-        <div class="col-md-12">
-          <input type="text" class="form-control" name="fullname" placeholder="Full Name">
-        </div>
-        <div class="col-md-12">
-          <input type="email" class="form-control" name="email" placeholder="Email">
-        </div>
-        <div class="col-md-12">
-          <input type="tel" class="form-control" name="mobile_number" placeholder="Mobile Number">
-        </div>
-        <div class="col-md-12">
-          <div class="input-group">
-            <input type="password" class="form-control" name="passwordSignup" id="passwordSignup" placeholder="Min 6 characters and contain both letters and numbers">
-            <button class="btn btn-outline-secondary" type="button" id="togglePasswordSignup">
-              <i class="bi bi-eye"></i>
-            </button>
-          </div>
-        </div>
-        <div class="col-md-12 text-center">
-          <div class="d-grid gap-3 mt-3">
-            <button class="btn btn-warning btn-lg" id="btnSignUp">
-              <i class="bi bi-person-plus-fill me-2"></i> Sign Up
-            </button>
-          </div>
-        </div>
-      </div>
-    </form>
-  </div>
-</div>
+                        <!-- Sign Up Tab -->
+                        <div class="tab-pane fade" id="signup" role="tabpanel">
+                            <h5 class="mb-0 fs-5"><i class="fas fa-user-plus me-2"></i>Sign Up</h5>
+                            <small>Create a new account.</small>
+                            <form id="frmSignUp" method="post">
+                            <div class="row g-4 mt-1">
+                                <div class="col-md-12">
+                                <input type="text" class="form-control" name="fullname" placeholder="Full Name">
+                                </div>
+                                <div class="col-md-12">
+                                <input type="email" class="form-control" name="email" placeholder="Email">
+                                </div>
+                                <div class="col-md-12">
+                                <input type="tel" class="form-control" name="mobile_number" placeholder="Mobile Number">
+                                </div>
+                                <div class="col-md-12">
+                                <div class="input-group">
+                                    <input type="password" class="form-control" name="passwordSignup" id="passwordSignup" placeholder="Min 6 characters and contain both letters and numbers">
+                                    <button class="btn btn-outline-secondary" type="button" id="togglePasswordSignup">
+                                    <i class="bi bi-eye"></i>
+                                    </button>
+                                </div>
+                                </div>
+                                <div class="col-md-12 text-center">
+                                <div class="d-grid gap-3 mt-3">
+                                    <button class="btn btn-warning btn-lg" id="btnSignUp">
+                                    <i class="bi bi-person-plus-fill me-2"></i> Sign Up
+                                    </button>
+                                </div>
+                                </div>
+                            </div>
+                            </form>
+                        </div>
+                        </div>
 
                     </div>
                 </div>
@@ -426,17 +443,39 @@ $max_point_used = round(($_SESSION['persen_max_point'] * $rData['total_nilai_rup
                                 <p class="text-muted"><span id="point_used_price"></span> &nbsp;</p>
                             </div>
                             <div class="text-primary fw-bold" style="font-size: 20px;">
-                                <p><span id="total_price"></span></p>
+                                <p><span class="total_price"></span></p>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+                                    
+        
     </div>
 </div>
 <!-- Service End -->
 
+<?php if ($_SESSION['osg_member_id'] != '') { ?>
+<!-- Floating Bottom Button for Mobile -->
+<div class="d-block d-lg-none position-fixed bottom-0 start-0 w-100 bg-white border-top" style="z-index: 1050; padding: 15px; box-shadow: 0 -2px 10px rgba(0,0,0,0.1);">
+    <div class="container-fluid p-1">
+        <div class="row align-items-center">
+            <div class="col-6">
+                <small class="text-muted d-block">Total Price</small>
+                <h6 class="mb-0 text-primary fw-bold">
+                     <p><span class="total_price"></span></p>
+                </h6>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-primary w-100" id="btnConfirmMobile">
+                    <i class="fas fa-check me-2"></i>Confirm Booking
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<?php } ?>
 <!-- Modal -->
 <div class="modal fade" id="modalInfo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 
@@ -453,10 +492,19 @@ $max_point_used = round(($_SESSION['persen_max_point'] * $rData['total_nilai_rup
 </div>
 <script>
 $(document).ready(function() {
-    $("#total_price").html(
+    $(".total_price").html(
         '<?php echo $_SESSION['osg_currency'] . " " . ($_SESSION['osg_currency'] == 'IDR' ? angka($total_price) : number_format($total_price, 1)); ?>'
     );
     $(".select2_single").select2();
+
+    $('#special_request').on('input', function() {
+        var len = $(this).val().length;
+        if (len > 1000) {
+            $(this).val($(this).val().substring(0, 1000));
+            len = 1000;
+        }
+        $('#specialRequestCounter').text(len + '/1000');
+    });
 });
 
 function bookingUpdate() {
@@ -528,6 +576,40 @@ $("#frmSimpan").submit(function(e) {
 
             },
             complete: function() {
+                $.unblockUI();
+            }
+        });
+    }
+});
+
+// Mobile floating button functionality
+$("#btnConfirmMobile").click(function(e) {
+    e.preventDefault();
+    if (confirm("Are you sure you want to confirm this booking?")) {
+        var formData = new FormData();
+        formData.append('bID', '<?php echo enkripsi($rData['booking_id']); ?>');
+        
+        formData.append('special_request', $("#special_request").val());
+        formData.append('tp', '<?php echo enkripsi($total_price); ?>');
+        
+        $.ajax({
+            type: "POST",
+            url: "ajax/bookingConfirmation.php",
+            data: formData,
+            processData: false,
+            contentType: false,
+            beforeSend: function() {
+                $('#btnConfirmMobile').prop('disabled', true);
+                $.blockUI({
+                    message: '<h6><img src="img/loading.gif" width="50" /> Please Wait</h6>'
+                });
+            },
+            success: function(data) {
+                $("#modalInfo").modal('show');
+                $("#ajaxInfo").html(data);
+            },
+            complete: function() {
+                $('#btnConfirmMobile').prop('disabled', false);
                 $.unblockUI();
             }
         });

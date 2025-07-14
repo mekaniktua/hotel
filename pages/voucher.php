@@ -2,8 +2,7 @@
 $sVoucher  = "SELECT v.*, m.merchant_type,m.name 
               FROM voucher v
               JOIN merchant m ON v.merchant_id = m.merchant_id
-              WHERE v.status_hapus='0' 
-              LIMIT 6";
+              WHERE v.status_hapus='0'";
 $qVoucher  = mysqli_query($conn, $sVoucher) or die(mysqli_error($conn));
 
 $types = [];
@@ -30,8 +29,7 @@ while ($rVoucher = mysqli_fetch_array($qVoucher)) {
                  alt='" . ($rVoucher['voucher_title']) . "' 
                  style='height: 150px; object-fit: cover;'>
 
-            <div class='card-body' style='margin-top:-15px'>
-                <div class='text-muted text-end mb-1'>By ".$merchant_name."</div>
+            <div class='card-body' style='margin-top:-5px'> 
 
                 <h6 class='card-title'>".$title."</h6>
 

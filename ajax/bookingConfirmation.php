@@ -1,11 +1,12 @@
 <?php
 session_start();
 include("../manajemen/database.php");
-include("../kirimMail.php");
+include("../kirimMail.php"); 
+
 
 $member_id = dekripsi(amankan($_SESSION['osg_member_id'])); 
 $booking_id = dekripsi(amankan($_POST['bID']));
-$payment_method = (amankan($_POST['payment_method']));
+$payment_method = (amankan('PayNow'));
 $special_request = (amankan($_POST['special_request']));
 $total_price = dekripsi(amankan($_POST['tp']));
 
@@ -34,7 +35,7 @@ if (empty($pesan)) {
   $nama = $rMember['fullname'] ? $rMember['fullname'] : 'Noname';
   $sender   = 'noreply@orangesky.id';
   $recepient = $rMember['email'];
-  $title    = 'Booking Confirmation Orange Sky - ' . $rData['booking_id'];
+  $title    = 'Booking Confirmation '. $rData['property_name'] . ' - ' . $rData['booking_id'];
   $start_date = $rData['start_date'];
   $end_date = $rData['end_date']; 
   $total_price = $rData['total'];  
@@ -43,19 +44,21 @@ if (empty($pesan)) {
   $address = $_SESSION['osg_address'];
   $phone = $_SESSION['osg_phone'];
   
-  if($payment_method == 'PayNow'){
+  if($payment_method == 'PayNow'){ 
     if($env =='production'){
-      $statusDokuPayment = dokuHostedCheckout($booking_id,$invoice_number,$total_price,$_SESSION['osg_currency'],$nama,$rMember['email'],$rMember['mobile_number'],$member_id);
+      $statusXenditPayment = xenditPayment($booking_id,$nama, $recepient, $total_price);
+      //$statusDokuPayment = dokuHostedCheckout($booking_id,$invoice_number,$total_price,$_SESSION['osg_currency'],$nama,$rMember['email'],$rMember['mobile_number'],$member_id);
     }else{
-      $statusDokuPayment = dokuHostedCheckoutLocalhost($booking_id,$invoice_number,$total_price,$_SESSION['osg_currency'],$nama,$rMember['email'],$rMember['mobile_number'],$member_id);      
+      $statusXenditPayment = xenditPayment($booking_id,$nama, $recepient, $total_price);
+     // $statusDokuPayment = dokuHostedCheckoutLocalhost($booking_id,$invoice_number,$total_price,$_SESSION['osg_currency'],$nama,$rMember['email'],$rMember['mobile_number'],$member_id);      
     }
-    if($statusDokuPayment['success']){
+    if ($statusXenditPayment['invoice_url']) {
       //set expired date +60 minutes
       $startDate = new DateTime($rData['created_date']);
       $startDate->modify('+60 minutes');
-      $expiredDate = $startDate->format('Y-m-d H:i:s');
-      $signature = $statusDokuPayment['signature']; 
-      $payment_link = $statusDokuPayment['payment_url'];
+      $expiredDate = $startDate->format('Y-m-d H:i:s'); 
+      $payment_link = $statusXenditPayment['invoice_url'];
+      $invoice_id = $statusXenditPayment['invoice_id'];
 
     
       //update booking 
@@ -64,16 +67,16 @@ if (empty($pesan)) {
                           expired_date='" . $expiredDate ."',
                           total='" . $total_price . "',
                           currency='" . $_SESSION['osg_currency'] . "',
-                          payment_method='" . $payment_method . "', 
+                          payment_method='" . $payment_method . "',  
+                          payment_link='" . $payment_link . "',
                           special_request='" . $special_request . "',
-                          payment_link='" . $payment_link . "'
+                          invoice_id='" . $invoice_id . "'
                     WHERE booking_id='" . $booking_id . "' and member_id='" . $member_id . "'";
       $qUpdate = mysqli_query($conn, $sUpdate) or die(mysqli_error($conn));
       $pesanSukses = "1";
     }else{
-      $payment_link = ''; 
-      $signature = $statusDokuPayment['signature'];
-      $pesan = "Failed to process payment".$statusDokuPayment['errorCurl'];
+      $payment_link = '';  
+      $pesan = "Failed to process payment: " . $statusXenditPayment['error'];
     }
   }else{ 
     

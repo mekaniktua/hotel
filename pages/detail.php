@@ -34,21 +34,30 @@ $sGaleri    = " SELECT g.*,p.property_url
                 FROM gallery g 
                 JOIN room_type tk ON tk.room_type_id=g.room_type_id
                 JOIN property p ON p.property_id=tk.property_id
-                WHERE g.status_hapus='0' and p.property_id='" . $property_id . "'";
+                WHERE g.status_hapus='0' and p.property_id='" . $property_id . "' ";
 $qGaleri    = mysqli_query($conn, $sGaleri) or die(mysqli_error($conn));
 
 $i = 0;
 $divGaleri = '';
+$hiddenGallery = '';
 while ($rGaleri = mysqli_fetch_array($qGaleri)) {
     $i += 1;
-    $divGaleri .= " <div class='col-6 mb-3'>
-                        <a href='" . $rGaleri['gallery_url'] . "' data-lightbox='gallery'>
-                            <img src='" . $rGaleri['gallery_url'] . "' class='img-fluid rounded' />
-                        </a>
-                    </div>
-                    ";
+    if ($i <= 6) {
+        // Tampilkan langsung di halaman
+        $divGaleri .= " <div class='col-6 col-md-4'>
+                            <a href='" . $rGaleri['gallery_url'] . "' data-lightbox='gallery'>
+                                <img src='" . $rGaleri['gallery_url'] . "' class='img-fluid rounded' style='width:100%; height:150px; object-fit:cover;' />
+                            </a>
+                        </div>";
+    } else {
+        // Sisanya disembunyikan untuk lightbox
+        $hiddenGallery .= "<a href='" . $rGaleri['gallery_url'] . "' data-lightbox='gallery' class='d-none'></a>";
+    }
 
-    $property_url = $rGaleri['property_url'];
+    // Ambil property_url dari salah satu gambar untuk preview utama
+    
+        $property_url = $rGaleri['property_url'];
+    
 }
 ?>
 
@@ -140,18 +149,24 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
 
 <?php if ($_GET['search'] == 1) { ?>
     <div class="container-fluid">
-        <div class="row px-3">
+        <div class="row g-2 px-3">
             <!-- Large Main Image -->
-            <div class="col-md-6 mb-3">
+            <div class="col-md-6 mb-3 position-relative">
                 <a href="<?php echo $property_url; ?>" data-lightbox="gallery">
-                    <img src="<?php echo $property_url; ?>" class="rounded shadow" style="max-width:100%;height: 100%;" />
+                    <img src="<?php echo $property_url; ?>" class="rounded shadow" style="width:100%;height:309px; object-fit:cover;" />
                 </a>
+                <?php if (!empty($hiddenGallery)) { ?>
+                <a href="#" data-lightbox="gallery" class="position-absolute bottom-0 end-0 m-3 text-dark bg-light bg-opacity-50 px-3 py-1 rounded" style="text-decoration:none; z-index:2;" onclick="event.preventDefault(); document.querySelectorAll('[data-lightbox=gallery]')[6].click();">
+                    <i class="bi bi-grid"></i> See All Photos
+                </a>
+                <?php } ?>
             </div>
 
             <!-- Smaller Gallery Images -->
             <div class="col-md-6">
-                <div class="row">
+                <div class="row g-2">
                     <?php echo $divGaleri; ?>
+                    <?php echo $hiddenGallery; ?>
                 </div>
             </div>
             <!-- <div class="position-relative">
@@ -226,7 +241,13 @@ while ($rGaleri = mysqli_fetch_array($qGaleri)) {
                     </div>
                 </div> -->
                 <div class="col-lg-12 col-md-12 wow fadeInUp" data-wow-delay="0.2s">
+                    <?php if($_GET['start_date'] < $_GET['end_date']){?>
                     <div id="tipeKamarList"></div>
+                    <?php } else { ?>
+                    <div class="alert alert-danger">
+                        <i class="fa fa-exclamation-triangle"></i> Please select check-in and check-out date.
+                    </div>
+                    <?php } ?>
                 </div>
             </div>
         </div>

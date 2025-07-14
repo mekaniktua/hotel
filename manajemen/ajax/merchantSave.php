@@ -9,6 +9,7 @@ $name = amankan($_POST['name']);
 $email = amankan($_POST['email']);
 $phone = amankan($_POST['phone']);
 $address = amankan($_POST['address']);
+$merchant_type = amankan($_POST['merchant_type']);
 $jenisInput = amankan(dekripsi($_POST['jenisInput']));
 
 
@@ -22,6 +23,9 @@ if ($jenisInput == 'New') {
   }
   if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     $pesan .= "<i class='fa fa-times'></i> Invalid email address";
+  }
+  if (empty($merchant_type)) {
+    $pesan .= "<i class='fa fa-times'></i> Merchant type is required";
   }
   if (empty($pesan)) {
     $sCari  = " SELECT *
@@ -44,6 +48,7 @@ if ($jenisInput == 'New') {
                         created_date='" . date("Y-m-d H:i:s") . "',
                         name='" . $name . "', 
                         email='" . $email . "',
+                        merchant_type='" . $merchant_type . "',
                         merchant_url='" . $location . "',
                         phone='" . ($phone) . "',
                         address='" . $address . "',
@@ -85,6 +90,7 @@ if ($jenisInput == 'New') {
               $sUpdate  = " UPDATE merchant
                             SET email='" . $email . "',
                                 name='" . $name . "',
+                                merchant_type='" . $merchant_type . "',
                                 merchant_url='" . $location . "',
                                 phone='" . ($phone) . "',
                                 address='" . $address . "'
@@ -101,6 +107,7 @@ if ($jenisInput == 'New') {
           $sUpdate  = " UPDATE merchant
                         SET email='" . $email . "',
                             name='" . $name . "', 
+                            merchant_type='" . $merchant_type . "',
                             phone='" . ($phone) . "',
                             address='" . $address . "'
                         WHERE merchant_id='" . $merchant_id . "'";

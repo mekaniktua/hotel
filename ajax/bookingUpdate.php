@@ -2,11 +2,10 @@
 session_start();
 include("../manajemen/database.php");
 
-$member_id = dekripsi(amankan($_SESSION['osg_member_id']));
-$member_email = (amankan($_SESSION['osg_member_email']));
-$booking_id = dekripsi(amankan($_POST['bID']));
-$point_used = (amankan($_POST['point_used']));
-$total_price = dekripsi(amankan($_POST['tp']));
+$member_id = dekripsi(amankan($_SESSION['osg_member_id'] ?? '')); 
+$booking_id = dekripsi(amankan($_POST['bID'] ?? ''));
+$point_used = (amankan($_POST['point_used'] ?? ''));
+$total_price = dekripsi(amankan($_POST['tp'] ?? ''));
 
 $sData  = " SELECT b.*
             FROM booking b  
@@ -80,6 +79,6 @@ if (!empty($pesanSukses)) { ?>
     $("#divPointUsed").removeClass("d-none").show();
     $("#point_used_price").html('<?php echo $point_used; ?>');
     $("#nilai_point").html('-<?php echo ($_SESSION['osg_currency']=='IDR' ? angka($nilai_point) : number_format($nilai_point,1)); ?>');
-    $("#total_price").html('<?php echo $_SESSION['osg_currency'] . " " . ($_SESSION['osg_currency'] == 'IDR' ? angka($total_price) : number_format($total_price, 1)); ?>');
+    $(".total_price").html('<?php echo $_SESSION['osg_currency'] . " " . ($_SESSION['osg_currency'] == 'IDR' ? angka($total_price) : number_format($total_price, 1)); ?>');
   </script>
 <?php } ?>

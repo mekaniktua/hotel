@@ -1,10 +1,17 @@
 <?php
 $merchant_id = amankan(dekripsi($_GET['mID']));
-$sData = "  SELECT * 
-            FROM merchant 
-            WHERE merchant_id='" . $merchant_id . "' and (status_hapus is null or status_hapus='0')";
-$qData = mysqli_query($conn, $sData) or die(mysqli_error($conn));
+$query = "SELECT * FROM merchant WHERE merchant_id = ? AND (status_hapus IS NULL OR status_hapus = '0')";
+$stmt = mysqli_prepare($conn, $query);
+mysqli_stmt_bind_param($stmt, "s", $merchant_id);
+mysqli_stmt_execute($stmt);
+$qData = mysqli_stmt_get_result($stmt);
 $rData = mysqli_fetch_array($qData);
+mysqli_stmt_close($stmt);
+ 
+$queryMerchantType = "SELECT * FROM merchant_type";
+$stmtMerchantType = mysqli_prepare($conn, $queryMerchantType);
+mysqli_stmt_execute($stmtMerchantType);
+$qMerchantType = mysqli_stmt_get_result($stmtMerchantType);
 
 ?>
 
@@ -47,6 +54,16 @@ $rData = mysqli_fetch_array($qData);
                               <div class="col-md-6 form-group">
                                  <label>PHONE</label>
                                  <input type="text" name="phone" id="phone" value="<?php echo $rData['phone'] ?>" class="form-control">
+                              </div>
+
+                              <div class="col-md-12 form-group">
+                                 <label>MERCHANT TYPE</label>
+                                 <select name="merchant_type" class="form-control">
+                                    <option value="">Select Merchant Type</option>
+                                    <?php while ($rMerchantType = mysqli_fetch_array($qMerchantType)) { ?>
+                                       <option value="<?php echo $rMerchantType['merchant_type']; ?>" <?php echo ($rData['merchant_type'] == $rMerchantType['merchant_type'] ? 'selected' : ''); ?>><?php echo $rMerchantType['merchant_type']; ?></option>
+                                    <?php } ?>
+                                 </select>
                               </div>
                               <div class="col-md-12 form-group">
                                  <label>ADDRESS</label>

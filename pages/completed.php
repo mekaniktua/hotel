@@ -21,20 +21,23 @@ $stmt = $conn->prepare("
     JOIN room_type tk on tk.room_type_id=b.room_type_id
     JOIN property p ON p.property_id=b.property_id
     LEFT JOIN member m ON b.member_id = m.member_id 
-    WHERE b.booking_id = ? AND b.invoice_number = ?
+    WHERE b.booking_id = ?
 ");
-$stmt->bind_param("ss", $booking_id, $invoice_number);
+$stmt->bind_param("s", $booking_id);
 $stmt->execute();
 $result = $stmt->get_result();
 $rData = $result->fetch_assoc();
+$invoice_id = $rData['invoice_id'];//invoice id from xendit
 $stmt->close();
 
 $status = '';
 $message = '';
 $showButton = true;
 
-if ($rData) {
-    $currentStatus = $rData['status'] ?? '';
+$statusXenditPayment = xenditCheckPayment($invoice_id);
+if($statusXenditPayment['status'] == 'PAID' || $statusXenditPayment['status'] == 'SETTLED'){ 
+    $paymentStatus = 'PAID';
+    $currentStatus = $rData['status'];
 
     if ($currentStatus === 'Waiting') {
         // Update status menjadi Completed
@@ -42,18 +45,18 @@ if ($rData) {
         $stmt = $conn->prepare("
             UPDATE booking 
             SET status = ? 
-            WHERE booking_id = ? AND invoice_number = ?
+            WHERE booking_id = ? AND invoice_id = ?
         ");
-        $stmt->bind_param("sss", $newStatus, $booking_id, $invoice_number);
+        $stmt->bind_param("sss", $newStatus, $booking_id, $invoice_id);
         $stmt->execute();
         $stmt->close();
 
-        // Kirim email konfirmasi
-        $payment_method = $rData['payment_method'] ?? 'Payment'; // pastikan tersedia
+        // Kirim email konfirmasi 
+        $payment_method = $statusXenditPayment['payment_method'] ?? 'Payment'; // pastikan tersedia
         $statusEmail = bookingPayment(
             'noreply@orangesky.id',
             $rData['email'],
-            'Booking Confirmation Orange Sky - ' . $booking_id,
+            'Booking Confirmation '.$rData['property_name'].' - ' . $booking_id,
             $booking_id,
             $invoice_number,
             $rData['fullname'], 
@@ -73,7 +76,7 @@ if ($rData) {
         $statusEmail = bookingPaymentNotif(
             'noreply@orangesky.id',
             'booknow@orangeskygroup.co.id',
-            'Booking Confirmation Orange Sky - ' . $booking_id,
+            'Booking Confirmation '.$rData['property_name'].' - ' . $booking_id,
             $booking_id,
             $invoice_number,
             $rData['fullname'], 
@@ -99,9 +102,11 @@ if ($rData) {
         $status = 'Invalid Status';
         $message = 'We could not process your payment confirmation due to an unexpected status.';
     }
+
 } else {
     $status = 'Payment Not Found';
     $message = 'We cannot find your payment.<br /><small>Please go to your booking (button below) and try to make payment again.</small>';
+    $paymentStatus = 'NOT FOUND';
     $showButton = false;
 }
 ?> 
@@ -119,7 +124,7 @@ if ($rData) {
                         <h5 class="card-title"><?php echo $status; ?></h5>
                         <p class="card-text"><?php echo $message; ?></p>
                         <small class="fs-5">Booking ID : <strong class="text-primary"><?php echo $booking_id; ?></strong></small><br />
-                        <small class="fs-5">Invoice Number : <strong class="text-primary"><?php echo $invoice_number; ?></strong></small><br />
+                        <small class="fs-5">Payment Status : <strong class="text-primary"><?php echo $paymentStatus; ?></strong></small><br />
                         <?php if ($showButton && $status != 'Payment Not Found'): ?>
                             <button class="btn btn-success rounded mt-3" onclick="window.open('./', '_self')"><i class="fa fa-home"></i> Home</button>
                         <?php elseif ($status == 'Payment Not Found'): ?>

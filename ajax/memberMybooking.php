@@ -21,12 +21,14 @@ if (!empty($start_date_filter)) {
 if (!empty($booking_id_filter)) {
     $query .= " AND b.booking_id LIKE '%$booking_id_filter%'";
 }
+  
+$today = date("Y-m-d"); 
 
 // Status berdasarkan tab
 if ($tab === 'upcoming') {
-    $status_filter = "(b.status = 'Booked' or b.status = 'Waiting') AND b.expired_date > '" . date("Y-m-d H:i:s") . "'";
+    $status_filter = "b.status IN ('Booked', 'Waiting', 'Completed') AND  DATE(start_date) >= '$today'";
 } elseif ($tab === 'completed') {
-    $status_filter = "b.status = 'Completed'";
+    $status_filter = "b.status = 'Completed' AND DATE(start_date) < '$today'";
 } elseif ($tab === 'expired') {
     $status_filter = "b.status = 'Expired'";
 } else {

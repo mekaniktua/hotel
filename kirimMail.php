@@ -128,7 +128,7 @@ $mail = new PHPMailer();
 $mail->setFrom($sender, $sender);
 
 /* Add a recipient. */
-$mail->addAddress($recepient, $recepient); 
+$mail->addAddress($recepient, $recepient);  
 $mail->isSMTP();  
                                     // Set mailer to use SMTP
 $mail->Host = 'mail.orangesky.id'; // Specify main and backup SMTP servers

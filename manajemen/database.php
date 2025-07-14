@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../vendor/autoload.php';
+use Xendit\Xendit; 
+
 if($_SERVER['HTTP_HOST']!='orangesky.id'){
 	$dbhost = "localhost";
 	$dbuser = "root";
@@ -346,6 +349,7 @@ if($bilangan < 12){
  
 return trim($temp);
 }
+
 
 function listArray($x){
 	if($x !=''){
@@ -869,7 +873,77 @@ function cekDokuPayment($clientId, $secretKey, $invoiceNumber, $url) {
         ];
     }
 }
-	
+ 
+
+
+
+function xenditPayment($booking_id, $nama, $email, $amount) {
+	$cert = str_replace('\\', '/', __DIR__ . '/certs/cacert.pem');
+	if (!file_exists($cert)) {
+        throw new Exception("cacert.pem tidak ditemukan di: $cert");
+    }	
+   
+    Xendit::setApiKey('xnd_production_Ipt4V4v8yTX9ktUqV8MJaoiVasfdIroxVbtXBq6cF7ZyeC8nqsokdGzvjsVN2G'); // Ganti dengan API Key Anda
+ 
+	$external_id = 'INV-' . $booking_id;
+
+    $params = [
+        'external_id' => $external_id,
+        'payer_email' => $email,
+        'description' => 'Pembayaran oleh ' . $nama,
+        'amount' => (int)$amount,
+		'invoice_duration' => 3600, // ← Masa berlaku 60 menit (dalam detik)
+        'success_redirect_url' => 'https://orangesky.id/?menu=completed&bID='
+            . enkripsi($booking_id) . "&iNumber=" . enkripsi($external_id)
+            . "&email=" . enkripsi($email),
+        'failure_redirect_url' => 'https://orangesky.id/?menu=error'
+            . '&bID=' . enkripsi($booking_id)
+            . '&errmsg=' . enkripsi("Failed to process payment"),
+    ];
+
+    try {
+        $invoice = \Xendit\Invoice::create($params);
+
+        return [
+            'status' => $invoice['status'],
+            'invoice_url' => $invoice['invoice_url'],
+            'invoice_id' => $invoice['id'],
+            'external_id' => $external_id
+        ];
+    } catch (Exception $e) {
+        error_log("Xendit Error: " . $e->getMessage());
+        return false;
+    }
+}
+
+function xenditCheckPayment($invoice_id) {
+    $cert = str_replace('\\', '/', __DIR__ . '/certs/cacert.pem');
+	if (!file_exists($cert)) {
+        throw new Exception("cacert.pem tidak ditemukan di: $cert");
+    }	
+    Xendit::setApiKey('xnd_production_Ipt4V4v8yTX9ktUqV8MJaoiVasfdIroxVbtXBq6cF7ZyeC8nqsokdGzvjsVN2G'); // ← Ganti dengan API key Anda
+
+    try {
+        $invoice = \Xendit\Invoice::retrieve($invoice_id);
+
+        return [
+            'status' => $invoice['status'] ?? '', // Contoh: PAID, PENDING, EXPIRED
+            'amount' => $invoice['amount'] ?? '',
+            'payer_email' => $invoice['payer_email'] ?? '',
+			'payment_method' => $invoice['payment_method'] ?? '', // ✅ metode pembayaran aktual
+            'paid_at' => $invoice['paid_at'] ?? '', // null jika belum dibayar
+            'expiry_date' => $invoice['expiry_date'] ?? '',
+        ];
+    } catch (Exception $e) {
+        error_log("Xendit Check Payment Error: " . $e->getMessage());
+        return false;
+    }
+}
+
+
+
+
+
 
 
 ?>

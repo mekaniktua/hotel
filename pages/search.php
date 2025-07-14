@@ -33,33 +33,33 @@ $sProperty  = " SELECT *
             WHERE p.status_hapus='0'";
 $qProperty  = mysqli_query($conn, $sProperty) or die(mysqli_error($conn));
 
-$rMerchant  = " SELECT m.* 
-                FROM merchant m
-                JOIN merchant_type mt ON m.merchant_type = mt.merchant_type
-                WHERE m.status_hapus='0' 
-                LIMIT 6";
-$qMerchant  = mysqli_query($conn, $rMerchant) or die(mysqli_error($conn));
+// $rMerchant  = " SELECT m.* 
+//                 FROM merchant m
+//                 JOIN merchant_type mt ON m.merchant_type = mt.merchant_type
+//                 WHERE m.status_hapus='0' 
+//                 LIMIT 6";
+// $qMerchant  = mysqli_query($conn, $rMerchant) or die(mysqli_error($conn));
 
-$mType = '';
-$mList = '';
-while ($rMerchant = mysqli_fetch_array($qMerchant)) {
-    $mType .= "<button class='btn btn-outline-primary filter-btn' data-filter='" . $rMerchant['merchant_type'] . "'>" . $rMerchant['merchant_type'] . "</button> ";
-    $mList .= "
-<div class='col-md-3 portfolio-item wow fadeInUp' data-wow-delay='0.1s' data-category='" . $rMerchant['merchant_type'] . "'>
-    <div class='room-item bg-transparent rounded shadow text-center'>
-        <div class='w-100 h-100 rounded d-flex align-items-center justify-content-center pt-4'>
-            <img src='" . $rMerchant['merchant_url'] . "' class='img-fluid' alt='" . $rMerchant['name'] . "' style='width: 200px; height: 200px; object-fit: cover;'>
-        </div>
+// $mType = '';
+// $mList = '';
+// while ($rMerchant = mysqli_fetch_array($qMerchant)) {
+//     $mType .= "<button class='btn btn-outline-primary filter-btn' data-filter='" . $rMerchant['merchant_type'] . "'>" . $rMerchant['merchant_type'] . "</button> ";
+//     $mList .= "
+// <div class='col-md-3 portfolio-item wow fadeInUp' data-wow-delay='0.1s' data-category='" . $rMerchant['merchant_type'] . "'>
+//     <div class='room-item bg-transparent rounded shadow text-center'>
+//         <div class='w-100 h-100 rounded d-flex align-items-center justify-content-center pt-4'>
+//             <img src='" . $rMerchant['merchant_url'] . "' class='img-fluid' alt='" . $rMerchant['name'] . "' style='width: 200px; height: 200px; object-fit: cover;'>
+//         </div>
 
-        <h5 class='mb-2 mt-3'>" . $rMerchant['name'] . "</h5>
-        <div class='d-flex justify-content-center mb-3'>
-            <small class='mb-3'>
-                <i class='fas fa-envelope text-primary me-2'></i>" . $rMerchant['email'] . "
-            </small>
-        </div>
-    </div>
-</div>";
-}
+//         <h5 class='mb-2 mt-3'>" . $rMerchant['name'] . "</h5>
+//         <div class='d-flex justify-content-center mb-3'>
+//             <small class='mb-3'>
+//                 <i class='fas fa-envelope text-primary me-2'></i>" . $rMerchant['email'] . "
+//             </small>
+//         </div>
+//     </div>
+// </div>";
+// }
 ?>
 
 <style>
@@ -361,9 +361,9 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
                         </div>
                         <div class="p-4 mt-2" style="height: 300px;">
                             <div class="d-flex justify-content-between mb-3" style="height: 50px;">
-                                <h5 class="mb-0"><?php echo $rProperty['property_name']; ?></h5>
-                                <div class="ps-2">
-                                    <?php for ($i = 0; $i < 5; $i++) echo '<small class="fa fa-star text-primary"></small>'; ?>
+                                <h5 class="mb-0" style="width: 60%;"><?php echo $rProperty['property_name']; ?></h5>
+                                <div style="width: 40%;">
+                                    Rating: <?php for ($i = 0; $i < 5; $i++) echo '<small class="fa fa-star text-primary"></small>'; ?>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between mb-3" style="height: 25px;">
@@ -390,19 +390,19 @@ while ($rMerchant = mysqli_fetch_array($qMerchant)) {
 </div>
 
 <div class="container my-4">
-    <h5><i class="fas fa-solid fa-store"></i> Merchant</h5>
+    <!-- <h5><i class="fas fa-solid fa-store"></i> Merchant</h5> -->
     <div class="text-center mb-4">
-        <button class="btn btn-outline-primary filter-btn" data-filter="all">All</button>
-        <?php echo $mType; ?>
+        <!-- <button class="btn btn-outline-primary filter-btn" data-filter="all">All</button> -->
+        <?php //echo $mType; ?>
     </div>
     <?php
-        $rMerchant = " SELECT * 
-                            FROM merchant
-                            WHERE status_hapus='0' LIMIT 6";
-        $qMerchant = mysqli_query($conn, $rMerchant) or die(mysqli_error($conn));
+        // $rMerchant = " SELECT * 
+        //                     FROM merchant
+        //                     WHERE status_hapus='0'";
+        // $qMerchant = mysqli_query($conn, $rMerchant) or die(mysqli_error($conn));
         ?>
     <div class="row" id="portfolio-items">
-        <?php echo $mList; ?>
+        <?php //echo $mList; ?>
 
     </div>
 </div>
@@ -567,15 +567,22 @@ $("#frmNewsletter").submit(function(e) {
 });
 
 function book(x) {
+    // Format tanggal ke format Indonesia (YYYY-MM-DD)
+    function formatDateIndo(date) {
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+
     let today = new Date();
     let tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
-    today = today.toISOString().split('T')[0];
-    tomorrow = tomorrow.toISOString().split('T')[0];
 
+    let todayIndo = formatDateIndo(today);
+    let tomorrowIndo = formatDateIndo(tomorrow);
 
-
-    window.location.href = "?menu=detail&pID=" + x + "&start_date=" + today + "&end_date=" + tomorrow +
+    window.location.href = "?menu=detail&pID=" + x + "&start_date=" + todayIndo + "&end_date=" + tomorrowIndo +
         "&adult=1&child=0&rooms=1&search=1";
 }
 
